@@ -1,0 +1,15 @@
+# dependencies / build output
+node_modules/
+live/dist/
+live/.wrangler/
+live/public/maps/
+live/public/guide/
+__pycache__/
+*.tmp
+
+# re-downloadable raw data (python scripts/fetch_maps.py recreates it)
+source/maps/raw/
+
+# personal data: player snapshots and exported sessions stay local
+source/player/
+sessions/

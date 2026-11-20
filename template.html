@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2312262b'/%3E%3Cpath d='M10 34c8-10 22-12 32-4l10-7v22l-10-7c-10 8-24 6-32-4z' fill='%233fb6a8'/%3E%3Ccircle cx='22' cy='31' r='3' fill='%2312262b'/%3E%3C/svg%3E">
+<title>GONE Fishing Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Same field-manual look as the Wesley's Moons guide, re-tinted for murky lake water. */
+:root{
+  --bg:#eceee9; --panel:#fafbf8; --ink:#1b2224; --muted:#596366; --line:#d2d8d4;
+  --accent:#17796f; --accent-ink:#fff; --accent-soft:#d3ebe6;
+  --ok:#2f7d4f; --warn:#a87400; --bad:#b3362c; --special:#6b4bb3; --gold:#a8790a;
+  --font-display:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --radius:6px; --top:52px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1416; --panel:#161d20; --ink:#e3e8e4; --muted:#93a0a2; --line:#28343a;
+    --accent:#3fb6a8; --accent-ink:#06201d; --accent-soft:#143532;
+    --ok:#5cc28a; --warn:#e2b64a; --bad:#ec6a5e; --special:#a68cf0; --gold:#e8c060;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1416; --panel:#161d20; --ink:#e3e8e4; --muted:#93a0a2; --line:#28343a;
+  --accent:#3fb6a8; --accent-ink:#06201d; --accent-soft:#143532;
+  --ok:#5cc28a; --warn:#e2b64a; --bad:#ec6a5e; --special:#a68cf0; --gold:#e8c060;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(var(--top) + 10px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--font-body)}
+a{color:var(--accent)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--font-display);text-wrap:balance;line-height:1.2;margin:0}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line)}
+.top-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:7px 14px;max-width:1400px;margin:0 auto}
+.brand{display:flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink)}
+.brand b{font-family:var(--font-display);font-size:19px;letter-spacing:.02em}
+.brand span{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+nav.tabs{display:flex;flex-wrap:wrap;gap:4px}
+nav.tabs a{font-family:var(--font-display);font-weight:600;font-size:14px;text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:var(--radius)}
+nav.tabs a[aria-current="page"]{background:var(--accent-soft);color:var(--ink)}
+.search{position:relative;flex:1 1 200px;max-width:340px;margin-left:auto}
+.search input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:inherit}
+.results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.18);max-height:60vh;overflow:auto;display:none}
+.results.show{display:block}
+.results a{display:block;padding:8px 12px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line);cursor:pointer}
+.results a.sel,.results a:hover{background:var(--accent-soft)}
+.results a small{display:block;color:var(--muted);font-size:12px}
+.results a .k{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--accent);margin-right:6px}
+.sync{font-family:var(--font-mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+@media (max-width:1560px){.sync span{display:none}}
+.themebtn{font:600 12px var(--font-display);border:1px solid var(--line);background:transparent;color:var(--muted);padding:4px 8px;border-radius:var(--radius);cursor:pointer}
+
+main{max-width:1400px;margin:0 auto;padding:12px 14px}
+.view{display:none}
+.view.on{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.panel h2{font-size:18px;margin-bottom:8px}
+.grid{display:grid;gap:10px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.btn{font:600 13px var(--font-display);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 10px;border-radius:var(--radius);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:4px;font:500 12px var(--font-mono);padding:2px 7px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);text-decoration:none;white-space:nowrap}
+.chip .sw{width:8px;height:8px;border-radius:50%}
+a.chip:hover{border-color:var(--accent)}
+.tag{font:600 10px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:3px;white-space:nowrap}
+.tag.c{background:color-mix(in srgb,var(--muted) 16%,transparent);color:var(--muted)}
+.tag.m{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.tag.l{background:color-mix(in srgb,var(--gold) 22%,transparent);color:var(--gold)}
+.tag.my{background:color-mix(in srgb,var(--special) 22%,transparent);color:var(--special)}
+.src{font:500 10px var(--font-mono);color:var(--muted);border:1px dashed var(--line);border-radius:3px;padding:0 4px;white-space:nowrap}
+.src.o{border-style:solid;border-color:var(--ok);color:var(--ok)}
+.src.c{border-color:var(--warn);color:var(--warn)}
+
+/* home */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px;margin-bottom:10px;align-items:start}
+@media (max-width:900px){.hero{grid-template-columns:1fr}}
+.lakehead{position:relative;overflow:hidden;border-radius:var(--radius);border:1px solid var(--line);background:linear-gradient(180deg,#0e2a30 0%,#0b1f24 55%,#071417 100%);color:#e7efe9;padding:18px 18px 16px}
+.lakehead h1{font-size:30px;letter-spacing:.01em}
+.lakehead p{margin:6px 0 0;max-width:62ch;color:#c4d3cf;font-size:14.5px}
+.lakehead .eyebrow{color:#7fb9b0}
+.lakehead svg{position:absolute;right:-10px;bottom:-6px;width:300px;opacity:.55;pointer-events:none}
+.stats{display:flex;flex-wrap:wrap;gap:14px 28px;margin-top:14px;position:relative}
+.stat b{display:block;font:700 28px var(--font-display);font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:#a8bcb7}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.dayrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.dayrow input{width:80px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:600 16px var(--font-mono)}
+.ms{display:grid;gap:6px}
+.ms .it{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius);padding:6px 10px;background:var(--bg);font-size:14px;display:flex;gap:10px;align-items:baseline}
+.ms .it b{font:700 13px var(--font-mono);min-width:54px}
+.ms .it.now{border-left-color:var(--accent)}
+.ms .it.past{opacity:.55}
+.mapcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.mcard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--mc);border-radius:var(--radius);padding:10px 12px;text-decoration:none;color:var(--ink);gap:4px}
+.mcard:hover{border-color:var(--mc)}
+.mcard b{font:700 18px var(--font-display)}
+.mcard small{color:var(--muted);font:500 12px var(--font-mono)}
+.mcard .sig{font-size:13px}
+.mcard .bar i{background:var(--mc)}
+.loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;counter-reset:s}
+.loop div{border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px;background:var(--bg);font-size:13.5px;counter-increment:s}
+.loop div::before{content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 12px var(--font-mono);margin-right:6px}
+.loop b{font-family:var(--font-display)}
+
+/* tables */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 8px}
+.filters .seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.filters .seg button{border:0;border-right:1px solid var(--line);background:var(--panel);color:var(--muted);font:600 13px var(--font-display);padding:6px 10px;cursor:pointer}
+.filters .seg button:last-child{border-right:0}
+.filters .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.filters label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.filters input[type=search]{padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit;font-size:14px;width:200px}
+.filters .count{font:500 12px var(--font-mono);color:var(--muted);margin-left:auto}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+table.t th{position:sticky;top:0;background:var(--panel);text-align:left;font:600 12px var(--font-display);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t th[data-k]{cursor:pointer}
+table.t th[data-k]::after{content:" ↕";opacity:.35}
+table.t th[aria-sort="ascending"]::after{content:" ↑";opacity:1}
+table.t th[aria-sort="descending"]::after{content:" ↓";opacity:1}
+table.t td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tr:hover td{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+table.t td.n{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t th.n{text-align:right}
+table.t tr.got td:first-child{box-shadow:inset 3px 0 var(--ok)}
+table.t .nm{font-weight:600;white-space:nowrap}
+.fishlink{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left;text-decoration:underline dotted color-mix(in srgb,var(--muted) 60%,transparent);text-underline-offset:3px}
+.fishlink:hover{color:var(--accent)}
+.mapdots{display:flex;gap:3px;flex-wrap:wrap}
+.md{font:600 10px var(--font-mono);width:20px;height:18px;display:inline-grid;place-items:center;border-radius:3px;color:#fff;background:var(--mc);text-decoration:none}
+.vbar{display:inline-block;height:6px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-left:6px;opacity:.7}
+input.ck{width:16px;height:16px;accent-color:var(--ok);cursor:pointer;vertical-align:middle}
+
+/* dossier */
+.crumbs{font:500 12px var(--font-mono);color:var(--muted);margin-bottom:8px}
+.crumbs a{color:var(--muted)}
+.dossier{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:900px){.dossier{grid-template-columns:1fr}}
+.rail{position:sticky;top:calc(var(--top) + 10px);display:grid;gap:10px}
+@media (max-width:900px){.rail{position:static}}
+.rail h1{font-size:28px}
+.rail .swatch{height:70px;border-radius:4px;background:linear-gradient(180deg,var(--mc),color-mix(in srgb,var(--mc) 35%,#061012));margin-bottom:8px;position:relative;overflow:hidden}
+.rail .swatch svg{position:absolute;inset:auto 0 0 0;width:100%;opacity:.45}
+dl.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:8px 0 0;font-size:13px}
+dl.facts dt{color:var(--muted);font-size:12px}
+dl.facts dd{margin:0;font-family:var(--font-mono);font-size:12.5px}
+.content{min-width:0;display:grid;gap:10px}
+.callout{border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--radius);padding:10px 12px}
+.callout h2,.callout h3{font-size:16px;margin:0 0 4px}
+.callout ul{margin:0;padding-left:18px}
+.callout li{margin:2px 0;font-size:14px}
+.hazbox{border:1px solid var(--bad);border-left:4px solid var(--bad);background:color-mix(in srgb,var(--bad) 8%,var(--panel));border-radius:var(--radius);padding:10px 12px}
+.hazbox h3{font-size:16px;margin:0 0 4px;color:var(--bad)}
+.hazbox ul{margin:0;padding-left:18px}
+.hazbox li{margin:2px 0;font-size:14px}
+.gh{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+
+/* cards */
+.tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px}
+.tc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--tcol,var(--line));border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.tc header{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tc h3{font-size:17px;margin-right:auto}
+.tc p{margin:0;font-size:14px}
+.tc .how b,.tc .meta b{font:600 11px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ok);margin-right:4px}
+.tc .meta{font-size:12.5px;color:var(--muted)}
+.tier{font:700 13px var(--font-display);width:26px;height:26px;display:inline-grid;place-items:center;border-radius:5px;color:#fff;flex:none}
+.tier.S{background:#c0392b}.tier.A{background:#cf6a17}.tier.B{background:#b8860b}.tier.C{background:#7d9a2f}.tier.x{background:#6b7377}
+.row2{display:flex;gap:10px;align-items:flex-start}
+
+/* notes / guides */
+.notes{max-width:920px}
+.notes h2{font-size:20px;margin:20px 0 8px}
+.notes h2:first-child{margin-top:0}
+.notes h3{font-size:16px;margin:14px 0 6px}
+.notes p{margin:6px 0}
+.notes ul,.notes ol{padding-left:20px;margin:6px 0}
+.notes li{margin:4px 0}
+.notes kbd{font:600 12px var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--panel)}
+.gtoc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.guide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;scroll-margin-top:calc(var(--top) + 10px)}
+.guide h2{font-size:20px;margin:0 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.guide.flash{outline:2px solid var(--accent)}
+table.log td{vertical-align:top;font-size:14px}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+@media (max-width:900px){.calc{grid-template-columns:1fr}}
+.calc label.f{display:grid;grid-template-columns:170px 1fr;gap:8px;align-items:center;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
+.calc label.f:first-of-type{border-top:0}
+.calc label.f span small{display:block;color:var(--muted);font-size:11.5px}
+.calc input[type=number],.calc select,.calc input[list]{padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:inherit;width:100%}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.big{font:700 40px var(--font-display);font-variant-numeric:tabular-nums;color:var(--accent)}
+.steps{font:13px var(--font-mono);display:grid;gap:3px;margin-top:6px}
+.steps div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:2px 0}
+
+/* catch book */
+.cb-maps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:10px}
+.goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.goals ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.goals li label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:14px}
+.goals h3{font:500 12px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px}
+.share textarea{width:100%;min-height:60px;font:12px var(--font-mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius);padding:6px}
+
+/* interactive map */
+.mapbox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px}
+.mapbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.mapbar h2{font-size:18px;margin-right:auto}
+.tg{font:600 12px var(--font-display);border:1px solid var(--line);background:transparent;color:var(--muted);padding:3px 9px;border-radius:999px;cursor:pointer;display:inline-flex;gap:5px;align-items:center;white-space:nowrap}
+.tg i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.tg[aria-pressed="true"]{border-color:var(--c,var(--accent));color:var(--ink);background:color-mix(in srgb,var(--c,var(--accent)) 16%,transparent)}
+.mapview{position:relative;height:min(78vh,900px);min-height:380px;overflow:hidden;border-radius:4px;background:#05080a;cursor:grab;touch-action:none;user-select:none;outline:none}
+.mapview:focus-visible{outline:2px solid var(--accent)}
+.mapview.dragging{cursor:grabbing}
+.mapinner{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.mapinner img.bg{display:block;width:100%;height:100%;pointer-events:none}
+.mapinner img.depth{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:opacity .2s}
+.mapinner.nodepth img.depth{opacity:0}
+.mapctl{position:absolute;top:10px;right:10px;display:grid;gap:4px;z-index:5}
+.mapctl button{width:32px;height:32px;font:700 18px var(--font-display);background:rgba(15,20,22,.85);color:#e3e8e4;border:1px solid #33424a;border-radius:6px;cursor:pointer;line-height:1}
+.mapctl button:hover{border-color:var(--accent)}
+.maphint{position:absolute;left:10px;bottom:10px;font:500 11px var(--font-mono);color:#cfd8d4;background:rgba(10,14,16,.75);border:1px solid #2a363c;border-radius:5px;padding:3px 8px;pointer-events:none;transition:opacity .3s}
+.mapview.zoomed .maphint{opacity:0}
+.mk{position:absolute;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid #fff;background:var(--c);padding:0;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 1px 4px rgba(0,0,0,.8)}
+.mk.structure{width:16px;height:16px;border-radius:3px}
+.mk.depth{width:18px;height:18px;background:#fff;border-color:#ef4444;border-width:3px}
+.mk:hover,.mk.hl{transform:translate(-50%,-50%) scale(1.5);z-index:3}
+.mk.hl{outline:3px solid #fff;outline-offset:2px}
+.mk.off{display:none}
+.mlabel{position:absolute;transform:translate(10px,-50%);font:600 11px var(--font-display);color:#fff;text-shadow:0 0 3px #000,0 0 3px #000,0 0 2px #000;pointer-events:none;white-space:nowrap}
+.mapinner.nolabels .mlabel,.mlabel.off{display:none}
+.mapinfo{margin-top:6px;font-size:14px;min-height:22px}
+.mapinfo b{font-family:var(--font-display)}
+.dlegend{display:flex;flex-wrap:wrap;gap:4px 12px;font:500 11.5px var(--font-mono);color:var(--muted);margin-top:6px;align-items:center}
+.dlegend[hidden]{display:none}
+.dlegend>span{display:inline-flex;gap:4px;align-items:center}
+.dscale{display:inline-flex!important;gap:0!important;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.dscale span{display:flex;flex-direction:column;align-items:center;min-width:38px}
+.dscale i{display:block;width:100%;height:10px;background:var(--c)}
+.dscale small{font:500 10.5px var(--font-mono);padding:1px 3px}
+.baitchips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.baitchips button{cursor:pointer}
+.baitchips button[aria-pressed="true"]{border-color:#10b981;background:color-mix(in srgb,#10b981 18%,transparent)}
+.mcard .thumb{height:150px;margin:-10px -12px 6px;background:#000 center/cover no-repeat;border-bottom:1px solid var(--line)}
+
+/* player */
+.plbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.plsearch{position:relative;flex:0 1 320px}
+.plsearch input{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--font-mono);padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.live{color:var(--ok);border-color:var(--ok)}
+.pill.snap{color:var(--warn);border-color:var(--warn)}
+.pill.warn{color:var(--bad);border-color:var(--bad)}
+@media (prefers-reduced-motion: no-preference){.pill.live i{animation:pulse 1.6s ease-in-out infinite}}
+@keyframes pulse{50%{opacity:.25}}
+.plset{margin-left:auto;font-size:14px}
+.plset summary{cursor:pointer;font:600 13px var(--font-display);color:var(--muted)}
+.plset[open]{flex-basis:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px}
+.plset p,.plset ul{margin:6px 0}
+.plset input#plproxy{padding:5px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:inherit;width:min(380px,100%)}
+.plset code,.hazbox code,.callout code{font-family:var(--font-mono);font-size:12.5px;background:var(--bg);padding:1px 4px;border-radius:3px}
+.plhead{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr);gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+@media (max-width:1000px){.plhead{grid-template-columns:auto 1fr}.plstats{grid-column:1/-1}}
+.plava{width:96px;height:96px;border-radius:8px;border:2px solid var(--line);object-fit:cover;background:var(--bg)}
+.plwho h1{font-size:30px;margin:2px 0 6px}
+.plbadges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.plxp b{font-family:var(--font-display)}
+.plstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 14px}
+@media (max-width:600px){.plstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.plstats .stat b{font-size:22px;line-height:1.15}
+.plstats .stat span{font-size:12px;color:var(--muted);display:block}
+.plgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+@media (max-width:900px){.plgrid{grid-template-columns:1fr}}
+.feed,.gfeed{display:grid;gap:2px}
+.frow{display:grid;grid-template-columns:76px minmax(0,1.1fr) 90px minmax(0,1.4fr);gap:8px;align-items:center;padding:5px 6px;border-radius:4px;font-size:14px;border-bottom:1px solid var(--line)}
+.gfeed .frow{grid-template-columns:76px minmax(0,1fr) minmax(0,2fr)}
+.frow .ft{font:500 11.5px var(--font-mono);color:var(--muted)}
+.frow .fw{font-family:var(--font-mono);text-align:right}
+.frow .fm{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow small{color:var(--muted);font:500 11px var(--font-mono)}
+.frow.me{background:color-mix(in srgb,var(--ok) 14%,transparent)}
+@keyframes freshin{from{background:color-mix(in srgb,var(--accent) 45%,transparent)}to{background:transparent}}
+.frow.fresh{animation:freshin 3s ease-out}
+.chal{border:1px solid var(--line);border-radius:var(--radius);padding:7px 10px;margin-bottom:6px;background:var(--bg)}
+.chal.done{border-color:var(--ok)}
+.chal .bar{margin:5px 0 3px}
+.wheremaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.wimg{position:relative;border-radius:4px;overflow:hidden;background:#000}
+.wimg img{display:block;width:100%}
+.wdot{position:absolute;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:#facc15;border:2px solid #fff;box-shadow:0 0 0 1px #000,0 0 8px #facc15;padding:0;cursor:pointer}
+.hb{display:grid;grid-template-columns:minmax(90px,150px) 1fr minmax(70px,auto);gap:8px;align-items:center;font-size:13.5px;margin:3px 0}
+.hb .hk{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbar{height:10px;background:var(--bg);border-radius:3px;overflow:hidden}
+.hbar i{display:block;height:100%;border-radius:3px}
+.hn{font-family:var(--font-mono);text-align:right;white-space:nowrap}
+.hn small{color:var(--muted);font-size:11px}
+h3.eyebrow{font-weight:500;margin:4px 0}
+.spgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.sp{border:1px solid var(--line);border-radius:var(--radius);padding:6px 8px;background:var(--bg);font-size:13.5px;opacity:.55}
+.sp.got{opacity:1;border-left:3px solid var(--ok)}
+.sp .spn{font:500 11.5px var(--font-mono);margin-top:2px}
+.sp .bar{height:5px;margin-top:4px}
+.toast{position:fixed;right:16px;bottom:16px;z-index:70;background:var(--panel);border:1px solid var(--ok);border-left:4px solid var(--ok);border-radius:var(--radius);padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:14px;max-width:min(420px,calc(100vw - 32px));transform:translateY(140%);transition:transform .25s;cursor:pointer}
+.toast.on{transform:none}
+
+/* popover */
+.pop{position:fixed;z-index:60;background:var(--panel);border:1px solid var(--accent);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.35);padding:10px 12px;font-size:14px;width:min(360px,calc(100vw - 20px))}
+.pop[hidden]{display:none}
+.pop b.ttl{font:700 18px var(--font-display);display:block;margin:2px 0 4px;padding-right:20px}
+.pop p{margin:4px 0}
+.pop .pclose{position:absolute;top:4px;right:6px;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer}
+.pop dl.facts{margin-top:4px}
+.foot{max-width:1400px;margin:6px auto 16px;padding:0 14px;font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#home"><b>GONE Fishing</b><span>Field guide</span></a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#home" data-tab="home">Home</a>
+      <a href="#fish" data-tab="fish">Fish</a>
+      <a href="#bait" data-tab="bait">Bait</a>
+      <a href="#maps" data-tab="maps">Maps</a>
+      <a href="#threats" data-tab="threats">Threats</a>
+      <a href="#upgrades" data-tab="upgrades">Upgrades</a>
+      <a href="#calc" data-tab="calc">Value calc</a>
+      <a href="#guides" data-tab="guides">Guides</a>
+      <a href="#catchbook" data-tab="catchbook">Catch book</a>
+      <a href="#player" data-tab="player">Player</a>
+      <a href="#notes" data-tab="notes">Field notes</a>
+    </nav>
+    <div class="search">
+      <input id="q" type="search" placeholder="Search fish, bait, threats…" autocomplete="off" aria-label="Search the guide">
+      <div class="results" id="results" role="listbox"></div>
+    </div>
+    <button class="themebtn" id="theme" title="Toggle light/dark">◐</button>
+    <div class="sync" title="Your catch book and goals are saved in this browser"><i></i><span>Saved on this device</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="v-home"></section>
+  <section class="view" id="v-fish"></section>
+  <section class="view" id="v-bait"></section>
+  <section class="view" id="v-maps"></section>
+  <section class="view" id="v-map"></section>
+  <section class="view" id="v-threats"></section>
+  <section class="view" id="v-upgrades"></section>
+  <section class="view" id="v-calc"></section>
+  <section class="view" id="v-guides"></section>
+  <section class="view" id="v-catchbook"></section>
+  <section class="view" id="v-player"></section>
+  <section class="view" id="v-notes"></section>
+</main>
+<p class="foot">Unofficial fan guide for <a href="https://store.steampowered.com/app/3645890/GONE_Fishing/" target="_blank" rel="noopener">GONE Fishing</a> (GONE Studios); not affiliated with the developers. Fish and bait numbers are a community catch-data snapshot published by <a href="https://gonefishingwiki.com/" target="_blank" rel="noopener">gonefishingwiki.com</a> (2026-10-21). Rules and numbers also come from the <a href="https://gonefishing.gg/faq" target="_blank" rel="noopener">official FAQ</a> and <a href="https://gonefishingwiki.vercel.app/" target="_blank" rel="noopener">gonefishingwiki.vercel.app</a>. Map images, markers and depth data: the <a href="https://gonefishing.gg/map" target="_blank" rel="noopener">gonefishing.gg interactive map</a>. Tags: <span class="src o">official</span> <span class="src">wiki</span> <span class="src c">community</span>.</p>
+
+<div class="pop" id="pop" role="dialog" aria-label="Details" hidden></div>
+
+<script>
+/*__DATA__*/
+/*__MAPS__*/
+</script>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => n == null ? "—" : Number(n).toLocaleString("en-US", {maximumFractionDigits: n < 10 ? 2 : (n < 1000 ? 1 : 0)});
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/* ---------- data ---------- */
+const MAPBY = Object.fromEntries(MAPS.map(m => [m.code, m]));
+const MAPID = Object.fromEntries(MAPS.map(m => [m.id, m]));
+const FISH = FISH_RAW.trim().split("\n").map(l => {
+  const [n, c, a, b, v, maps, t] = l.split("|");
+  return {n, id: slug(n), catches: +c, avg: +a, best: +b, val: +v, maps: maps.split(""), tier: t, note: FISH_NOTES[n] || ""};
+});
+const FISHBY = Object.fromEntries(FISH.map(f => [f.id, f]));
+const TOTAL_CATCHES = FISH.reduce((s, f) => s + f.catches, 0);
+FISH.forEach(f => f.share = f.catches / TOTAL_CATCHES);
+const BAIT = BAIT_RAW.trim().split("\n").map(l => {
+  const [n, s, c, sp, m] = l.split("|");
+  const tier = BAIT_TIERS.find(t => +s >= t.lo && +s <= t.hi);
+  return {n, id: slug(n), score: +s, catches: +c, species: +sp, maps: +m, tier: tier ? tier.t : "", note: BAIT_NOTES[n] || ""};
+});
+const tierLabel = f => f.tier === "c" ? "Common" : f.tier === "m" ? "Mid" : (f.n === "Rhizodus" ? "Mythic" : "Legendary+");
+const tierCls = f => f.tier === "l" ? (f.n === "Rhizodus" ? "my" : "l") : f.tier;
+const mapDots = codes => `<span class="mapdots">${codes.map(c => MAPBY[c]).filter(Boolean).map(m => `<a class="md" style="--mc:${m.color}" href="#map-${m.id}" title="${esc(m.name)}">${m.code}</a>`).join("")}</span>`;
+const srcTag = s => s === "o" ? `<span class="src o">official</span>` : s === "c" ? `<span class="src c">community</span>` : `<span class="src">wiki</span>`;
+
+/* ---------- storage ---------- */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let CAUGHT = new Set(LS.get("gf-caught", []));
+let GOALSDONE = new Set(LS.get("gf-goals", []));
+const saveCaught = () => LS.set("gf-caught", [...CAUGHT]);
+const toggleCaught = (id, on) => { on ? CAUGHT.add(id) : CAUGHT.delete(id); saveCaught(); $$(`input.ck[data-f="${id}"]`).forEach(x => x.checked = on); $$(`tr[data-f="${id}"]`).forEach(r => r.classList.toggle("got", on)); };
+
+/* theme */
+const applyTheme = t => { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; };
+applyTheme(LS.get("gf-theme", null));
+$("#theme").onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const nx = cur === "dark" ? "light" : "dark"; applyTheme(nx); LS.set("gf-theme", nx);
+};
+
+/* ---------- sortable table helper ---------- */
+function sortable(table, rows, cols, render, initial) {
+  let key = initial[0], dir = initial[1];
+  const tbody = table.tBodies[0];
+  const draw = list => { tbody.innerHTML = list.map(render).join(""); };
+  const apply = list => {
+    const c = cols[key];
+    const sorted = [...list].sort((a, b) => { const x = c(a), y = c(b); return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; });
+    $$("th[data-k]", table).forEach(th => th.setAttribute("aria-sort", th.dataset.k === key ? (dir > 0 ? "ascending" : "descending") : "none"));
+    draw(sorted);
+  };
+  let current = rows;
+  $$("th[data-k]", table).forEach(th => th.onclick = () => {
+    if (key === th.dataset.k) dir = -dir; else { key = th.dataset.k; dir = typeof cols[key](rows[0]) === "string" ? 1 : -1; }
+    apply(current);
+  });
+  return list => { current = list; apply(list); };
+}
+
+/* ---------- home ---------- */
+const WAVES = `<svg viewBox="0 0 300 120" aria-hidden="true"><path d="M0 70 Q37 58 75 70 T150 70 T225 70 T300 70 V120 H0Z" fill="#17796f" opacity=".5"/><path d="M0 88 Q37 78 75 88 T150 88 T225 88 T300 88 V120 H0Z" fill="#0c4a44"/><path d="M190 30 L190 74" stroke="#cfe3dd" stroke-width="1.2" stroke-dasharray="3 3"/><path d="M150 4 Q185 6 190 30" stroke="#cfe3dd" stroke-width="1.5" fill="none"/><circle cx="190" cy="76" r="4" fill="#e85a4f"/><path d="M220 100c6-7 16-8 22-3l7-5v15l-7-5c-6 5-16 4-22-2z" fill="#3fb6a8"/></svg>`;
+
+function renderHome() {
+  const day = LS.get("gf-day", 1);
+  const leg = FISH.filter(f => f.tier === "l");
+  $("#v-home").innerHTML = `
+  <div class="hero">
+    <div class="lakehead">
+      <div class="eyebrow">Co-op survival horror · 1–8 players · v1.0 (Oct 2026)</div>
+      <h1>Keep the quota. Survive the night.</h1>
+      <p>Catch fish, sacrifice them at the altar before dark, and get back to bed before the lake comes for you. This guide gathers every fish, bait score, map, threat and upgrade on one page, plus a catch book that saves in your browser.</p>
+      <div class="stats">
+        <div class="stat"><b>${FISH.length}</b><span>species tracked</span></div>
+        <div class="stat"><b>${BAIT.length}</b><span>baits scored</span></div>
+        <div class="stat"><b>${leg.length}</b><span>legendary / mythic</span></div>
+        <div class="stat"><b>${CAUGHT.size}/${FISH.length}</b><span>in your catch book</span></div>
+      </div>
+      ${WAVES}
+    </div>
+    <div class="panel">
+      <h2>Run planner</h2>
+      <div class="dayrow"><label for="day" class="eyebrow">Current day</label><input id="day" type="number" min="1" max="999" value="${day}"><span class="eyebrow" id="perks"></span></div>
+      <div class="ms" id="ms"></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-bottom:10px">
+    <h2>The daily loop</h2>
+    <div class="loop">
+      <div><b>Gather bait.</b> Worms, frogs, lizards around camp. Empty the minnow trap each morning.</div>
+      <div><b>Fish.</b> Hold to charge the cast. Click in the green band on a bite. Reel, and ease off before the line snaps.</div>
+      <div><b>Multiply.</b> Cook (+50% with the grill) and/or gamble (up to 10×). The order doesn't matter.</div>
+      <div><b>Sacrifice.</b> Deposit at the altar (<kbd>G</kbd> / click) until the flame turns <b style="color:#3b82f6">blue</b>.</div>
+      <div><b>Sell &amp; upgrade.</b> Sell spare fish to the trader. Grill and Fish Value first.</div>
+      <div><b>Sleep.</b> Blue flame = safe to sleep. Miss quota and the night hunts you.</div>
+    </div>
+  </div>
+  <h2 style="font-size:18px;margin:4px 0 8px">Maps</h2>
+  <div class="mapcards">${MAPS.filter(m => m.id !== "tutorial").map(m => {
+    const fs = FISH.filter(f => f.maps.includes(m.code)); const got = fs.filter(f => CAUGHT.has(f.id)).length;
+    return `<a class="mcard" style="--mc:${m.color}" href="#map-${m.id}">${MAPIMG[m.id] ? `<div class="thumb" style="background-image:url(${MAPIMG[m.id]})"></div>` : ""}<b>${esc(m.name)}</b><small>${fs.length} species · unlock: ${esc(m.unlock)}</small><span class="sig">★ ${m.sig.map(esc).join(", ")}</span><div class="bar"><i style="width:${fs.length ? got / fs.length * 100 : 0}%"></i></div><small>${got}/${fs.length} caught</small></a>`;
+  }).join("")}</div>
+  <div class="gh" style="margin-top:10px">
+    <div class="callout"><h3>Top tips</h3><ul>
+      <li>Take <b>Sticky Hook</b> first. Losing fewer fish beats everything else early.</li>
+      <li>Max <b>Big Grill</b> and <b>Fish Value</b> before anything else (+50% each).</li>
+      <li>Kill a <b>Troll</b> (3 TNT) for an 86-score ragdoll, the best bait in the game.</li>
+      <li>Rain improves catch quality and storms are stronger. Drink a beer before a storm.</li>
+      <li>Every map has a 4,500+ depth spot. Past 2,000 depth, fish are worth far more.</li>
+    </ul></div>
+    <div class="hazbox"><h3>Don't die to these</h3><ul>
+      <li>Arctic snow day: miss quota and the run is over.</li>
+      <li>Wading: sharks circle anglers standing in water.</li>
+      <li>Larry, NightTerrors, HEV, Jumping Shark and hallucinations can't be killed. Don't waste TNT on them.</li>
+      <li>Hardcore: permadeath, bait destroyed on reload, and the save is deleted on game over.</li>
+    </ul></div>
+  </div>`;
+  const drawMs = () => {
+    const d = Math.max(1, +$("#day").value || 1); LS.set("gf-day", d);
+    const perkUnlocks = Math.floor(d / 7);
+    $("#perks").textContent = perkUnlocks ? `${perkUnlocks} perk unlock${perkUnlocks > 1 ? "s" : ""} so far` : "first perk at day 7";
+    const extra = []; for (let k = 35; k <= Math.max(d + 21, 35); k += 7) extra.push({d: k, t: "Perk unlock (every 7 days)."});
+    const all = [...MILESTONES, ...extra.filter(e => !MILESTONES.some(m => m.d === e.d))].sort((a, b) => a.d - b.d);
+    const prev = all.filter(m => m.d <= d).slice(-2), next = all.filter(m => m.d > d).slice(0, 4);
+    $("#ms").innerHTML = [...prev.map(m => [m, m.d === d ? "now" : "past"]), ...next.map(m => [m, ""])]
+      .map(([m, c]) => `<div class="it ${c}"><b>Day ${m.d}</b><span>${esc(m.t)}${c === "" ? ` <span class="eyebrow">in ${m.d - d}d</span>` : ""}</span></div>`).join("");
+  };
+  $("#day").oninput = drawMs; drawMs();
+}
+
+/* ---------- fish ---------- */
+let fishState = {map: "all", tier: "all", q: "", hide: false};
+function fishRow(f) {
+  const maxv = 14656;
+  return `<tr data-f="${f.id}" class="${CAUGHT.has(f.id) ? "got" : ""}">
+    <td><input type="checkbox" class="ck" data-f="${f.id}" ${CAUGHT.has(f.id) ? "checked" : ""} aria-label="Caught ${esc(f.n)}"></td>
+    <td class="nm"><button class="fishlink" data-pop="${f.id}">${esc(f.n)}</button></td>
+    <td><span class="tag ${tierCls(f)}">${tierLabel(f)}</span></td>
+    <td class="n">${fmt(f.val)}<span class="vbar" style="width:${Math.max(2, Math.sqrt(f.val / maxv) * 60)}px"></span></td>
+    <td class="n">${fmt(f.avg)}</td><td class="n">${fmt(f.best)}</td>
+    <td class="n" title="${(f.share * 100).toFixed(2)}% of all logged catches">${(f.share * 100).toFixed(f.share < .001 ? 3 : 2)}%</td>
+    <td>${mapDots(f.maps)}</td></tr>`;
+}
+function renderFish() {
+  const v = $("#v-fish");
+  v.innerHTML = `
+  <div class="filters">
+    <div class="seg" id="fmap">${[["all", "All maps"], ...MAPS.map(m => [m.code, m.name])].map(([k, l]) => `<button data-v="${k}" aria-pressed="${fishState.map === k}">${l}</button>`).join("")}</div>
+    <div class="seg" id="ftier">${[["all", "All"], ["c", "Common"], ["m", "Mid"], ["l", "Legendary+"]].map(([k, l]) => `<button data-v="${k}" aria-pressed="${fishState.tier === k}">${l}</button>`).join("")}</div>
+    <input type="search" id="fq" placeholder="Filter by name…" value="${esc(fishState.q)}">
+    <label><input type="checkbox" id="fhide" ${fishState.hide ? "checked" : ""}> Hide caught</label>
+    <span class="count" id="fcount"></span>
+  </div>
+  <div class="tablewrap"><table class="t" id="fishtable"><thead><tr>
+    <th title="Caught">✓</th><th data-k="n">Fish</th><th data-k="tier">Tier</th><th data-k="val" class="n">Max value</th><th data-k="avg" class="n">Avg lb</th><th data-k="best" class="n">Record lb</th><th data-k="share" class="n" title="Share of all logged catches: a rough rarity">Catch share</th><th>Maps</th>
+  </tr></thead><tbody></tbody></table></div>
+  <p class="eyebrow" style="margin-top:8px">Max value = the highest point value seen in community catch data. Catch share = how often players log it, a rough rarity. Click a fish for details. Tick ✓ to add it to your catch book.</p>`;
+  const tierOrd = {c: 0, m: 1, l: 2};
+  const upd = sortable($("#fishtable"), FISH, {n: f => f.n, tier: f => tierOrd[f.tier] * 1e6 + f.val, val: f => f.val, avg: f => f.avg, best: f => f.best, share: f => f.share}, fishRow, ["val", -1]);
+  const refresh = () => {
+    const q = fishState.q.toLowerCase();
+    const list = FISH.filter(f => (fishState.map === "all" || f.maps.includes(fishState.map)) && (fishState.tier === "all" || f.tier === fishState.tier) && (!q || f.n.toLowerCase().includes(q)) && !(fishState.hide && CAUGHT.has(f.id)));
+    $("#fcount").textContent = `${list.length} of ${FISH.length}`;
+    upd(list);
+  };
+  const seg = (id, k) => $$(`#${id} button`).forEach(b => b.onclick = () => { fishState[k] = b.dataset.v; $$(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)); refresh(); });
+  seg("fmap", "map"); seg("ftier", "tier");
+  $("#fq").oninput = e => { fishState.q = e.target.value; refresh(); };
+  $("#fhide").onchange = e => { fishState.hide = e.target.checked; refresh(); };
+  refresh();
+}
+
+/* ---------- bait ---------- */
+function renderBait() {
+  const v = $("#v-bait");
+  v.innerHTML = `
+  <div class="gh" style="margin-bottom:10px">
+    <div class="callout"><h3>How bait score works</h3><ul>
+      <li>The game picks a fish, then checks whether your <b>total bait score</b> meets that species' floor.</li>
+      <li>Total = bait value + beer + day count + difficulty, × totem multipliers (Leviathan ×1.10–1.25).</li>
+      <li><b>60+</b> bait value for big fish (official FAQ). <b>175+</b> total score for Legendary bites (was 200 before 10-03).</li>
+      <li>Worms and frogs in shallow water are enough for Blue Gill and Red Horse Suckers.</li>
+    </ul></div>
+    <div class="panel"><h2>Tiers</h2>${BAIT_TIERS.map(t => `<div class="row2" style="margin:4px 0"><span class="tier ${t.t === "T5" ? "S" : t.t === "T4" ? "A" : t.t === "T3" ? "B" : "C"}" style="width:auto;padding:0 6px">${t.t}</span><span><b class="mono">${t.lo}–${t.hi === 99 ? "86" : t.hi}</b> ${esc(t.d)}</span></div>`).join("")}
+      <p class="eyebrow" style="margin-top:8px">Ragdolls = killed monsters. Most die to one TNT, Crab Queen takes 2, Troll takes 3.</p></div>
+  </div>
+  <div class="filters"><input type="search" id="bq" placeholder="Filter baits…"><div class="seg" id="btier">${["all", "T5", "T4", "T3", "T2", "T1"].map(t => `<button data-v="${t}" aria-pressed="${t === "all"}">${t === "all" ? "All" : t}</button>`).join("")}</div><span class="count" id="bcount"></span></div>
+  <div class="tablewrap"><table class="t" id="baittable"><thead><tr>
+    <th data-k="n">Bait</th><th data-k="score" class="n">Score</th><th data-k="tier">Tier</th><th data-k="catches" class="n">Logged uses</th><th data-k="species" class="n" title="Different species caught with it">Species seen</th><th data-k="maps" class="n">Maps</th><th>Where / notes</th>
+  </tr></thead><tbody></tbody></table></div>`;
+  const upd = sortable($("#baittable"), BAIT, {n: b => b.n, score: b => b.score, tier: b => b.score, catches: b => b.catches, species: b => b.species, maps: b => b.maps},
+    b => `<tr><td class="nm">${esc(b.n)}</td><td class="n"><b>${b.score}</b><span class="vbar" style="width:${b.score * .7}px;background:${b.score >= 60 ? "var(--gold)" : "var(--accent)"}"></span></td><td><span class="tag ${b.score >= 73 ? "l" : b.score >= 60 ? "m" : "c"}">${b.tier}</span></td><td class="n">${fmt(b.catches)}</td><td class="n">${b.species}</td><td class="n">${b.maps}</td><td style="font-size:13px">${esc(b.note)}</td></tr>`, ["score", -1]);
+  let tier = "all";
+  const refresh = () => { const q = $("#bq").value.toLowerCase(); const l = BAIT.filter(b => (tier === "all" || b.tier === tier) && (!q || b.n.toLowerCase().includes(q) || b.note.toLowerCase().includes(q))); $("#bcount").textContent = `${l.length} of ${BAIT.length}`; upd(l); };
+  $("#bq").oninput = refresh;
+  $$("#btier button").forEach(b => b.onclick = () => { tier = b.dataset.v; $$("#btier button").forEach(x => x.setAttribute("aria-pressed", x === b)); refresh(); });
+  refresh();
+}
+
+/* ---------- maps ---------- */
+function renderMaps() {
+  $("#v-maps").innerHTML = `
+  <div class="tablewrap" style="margin-bottom:10px"><table class="t"><thead><tr><th>Map</th><th>Unlock</th><th class="n">Species</th><th>Top catches</th><th>Watch out for</th></tr></thead><tbody>
+  ${MAPS.filter(m => m.id !== "tutorial").map(m => `<tr><td class="nm"><a href="#map-${m.id}" style="color:var(--ink)"><span class="md" style="--mc:${m.color};margin-right:6px">${m.code}</span>${esc(m.name)}</a></td><td>${esc(m.unlock)}</td><td class="n">${FISH.filter(f => f.maps.includes(m.code)).length}</td><td>${m.sig.map(s => `<button class="fishlink" data-pop="${slug(s)}">${esc(s)}</button>`).join(", ")}</td><td style="font-size:13px">${m.threats.map(esc).join(", ")}</td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="mapcards">${MAPS.filter(m => m.id !== "tutorial").map(m => `<a class="mcard" style="--mc:${m.color}" href="#map-${m.id}">${MAPIMG[m.id] ? `<div class="thumb" style="background-image:url(${MAPIMG[m.id]})"></div>` : ""}<b>${esc(m.name)}</b><small>Unlock: ${esc(m.unlock)} · depth ${esc(m.depth)}</small><span class="sig">${esc(m.tips[0])}</span></a>`).join("")}</div>`;
+}
+
+/* ---------- interactive map ---------- */
+const MK = {structure: ["Structures", "#0ea5e9"], custom: ["Clinket's shop", "#22d3ee"], vehicle: ["Boat", "#a855f7"], bait: ["Bait spawns", "#10b981"], enemy: ["Enemies", "#f43f5e"], depth: ["Deepest water", "#ef4444"]};
+/* keep in sync with BANDS in scripts/fetch_maps.py */
+const DBANDS = [["0", "rgb(186,230,253)"], ["500", "rgb(125,211,252)"], ["1k", "rgb(56,189,248)"], ["2k", "rgb(37,99,235)"], ["2.5k", "rgb(250,204,21)"], ["3.5k", "rgb(245,158,11)"], ["4.5k", "rgb(239,68,68)"], ["6k+", "rgb(190,24,93)"]];
+const baitKey = l => l.replace(/\(.*?\)/g, "").replace(/\bbait\b/ig, "").replace(/inside.*$/i, "").trim().toLowerCase().replace(/s$/, "") || l.toLowerCase();
+function mapViewer(id) {
+  const md = MAPDATA[id]; if (!md) return "";
+  const st = Object.assign({structure: true, custom: true, vehicle: true, bait: true, enemy: true, depth: true, heat: false, labels: true}, LS.get("gf-mapview", {}));
+  const groups = {};
+  md.markers.filter(m => m.c === "bait").forEach(m => { const k = baitKey(m.l); (groups[k] = groups[k] || {l: m.l.replace(/\s*\(.*?\)/, "").replace(/\s*bait$/i, ""), n: 0}).n++; });
+  const labelled = c => c === "structure" || c === "custom" || c === "vehicle" || c === "depth";
+  return `<div class="mapbox" id="mapbox" data-map="${id}">
+    <div class="mapbar"><h2>Map</h2>
+      ${Object.entries(MK).filter(([k]) => md.markers.some(m => m.c === k)).map(([k, [l, c]]) => `<button class="tg" data-cat="${k}" style="--c:${c}" aria-pressed="${st[k] !== false}"><i></i>${l}</button>`).join("")}
+      <button class="tg" data-opt="heat" style="--c:#facc15" aria-pressed="${!!st.heat}">Depth chart</button>
+      <button class="tg" data-opt="labels" aria-pressed="${st.labels !== false}">Labels</button>
+    </div>
+    <div class="mapview" id="mapview" tabindex="0" aria-label="Map. Drag to move, scroll to zoom.">
+      <div class="mapinner ${st.heat ? "" : "nodepth"} ${st.labels === false ? "nolabels" : ""}" id="mapinner">
+        <img class="bg" src="${MAPIMG[id]}" alt="Top-down map of the ${esc(MAPID[id].name)}" draggable="false">
+        <img class="depth" src="${MAPDEPTH[id]}" alt="" draggable="false">
+        ${md.markers.map((m, i) => `<button class="mk ${m.c} ${st[m.c] === false ? "off" : ""}" data-i="${i}" data-c="${m.c}" ${m.c === "bait" ? `data-b="${esc(baitKey(m.l))}"` : ""} style="left:${m.x}%;top:${m.y}%;--c:${MK[m.c][1]}" title="${esc(m.l)}" aria-label="${esc(m.l)}"></button>${labelled(m.c) ? `<span class="mlabel ${st[m.c] === false ? "off" : ""}" data-c="${m.c}" style="left:${m.x}%;top:${m.y}%">${esc(m.l)}</span>` : ""}`).join("")}
+      </div>
+      <div class="mapctl"><button data-z="in" title="Zoom in">+</button><button data-z="out" title="Zoom out">−</button><button data-z="reset" title="Fit map">⤢</button></div>
+      <div class="maphint">Drag to move · scroll to zoom</div>
+    </div>
+    <div class="mapinfo" id="mapinfo">Click a marker for its name.</div>
+    <div class="dlegend" id="dlegend" ${st.heat ? "" : "hidden"}><span>Deepest catches logged:</span><span class="dscale">${DBANDS.map(([l, c]) => `<span style="--c:${c}"><i></i><small>${l}</small></span>`).join("")}</span><span>White lines = 2,500 (big fish) and 4,500. Built from player catches, so only fished water is shaded.</span></div>
+    ${Object.keys(groups).length ? `<div class="baitchips"><span class="eyebrow" style="align-self:center">Find bait:</span>${Object.entries(groups).sort((a, b) => a[1].l.localeCompare(b[1].l)).map(([k, g]) => `<button class="chip" data-bk="${esc(k)}">${esc(g.l)}${g.n > 1 ? ` ×${g.n}` : ""}</button>`).join("")}</div>` : ""}
+  </div>`;
+}
+function wireMap() {
+  const box = $("#mapbox"); if (!box) return;
+  const md = MAPDATA[box.dataset.map], inner = $("#mapinner"), view = $("#mapview"), info = $("#mapinfo");
+  const st = LS.get("gf-mapview", {});
+  const MAXS = 8;
+  let s = 1, tx = 0, ty = 0, base = 0;  // scale relative to "fit", translation in px
+  const vw = () => view.clientWidth, vh = () => view.clientHeight;
+  const clamp = () => {
+    const W = base * s;
+    tx = W <= vw() ? Math.min(Math.max(tx, 0), vw() - W) : Math.min(Math.max(tx, vw() - W), 0);
+    ty = W <= vh() ? Math.min(Math.max(ty, 0), vh() - W) : Math.min(Math.max(ty, vh() - W), 0);
+  };
+  const apply = () => { clamp(); inner.style.width = inner.style.height = base * s + "px"; inner.style.transform = `translate(${tx}px,${ty}px)`; view.classList.toggle("zoomed", s > 1.01); };
+  const fit = () => { base = Math.min(vw(), vh()); s = 1; tx = (vw() - base) / 2; ty = (vh() - base) / 2; apply(); };
+  const zoomAt = (ns, mx, my) => { ns = Math.min(MAXS, Math.max(1, ns)); tx = mx - (mx - tx) * ns / s; ty = my - (my - ty) * ns / s; s = ns; apply(); };
+  const centerOn = (px, py, ns) => { s = Math.min(MAXS, Math.max(1, ns)); tx = vw() / 2 - px / 100 * base * s; ty = vh() / 2 - py / 100 * base * s; apply(); };
+  new ResizeObserver(() => { const old = base; if (!vw()) return; base = Math.min(vw(), vh()); if (!old) fit(); else apply(); }).observe(view);
+  fit();
+  view.addEventListener("wheel", e => {
+    e.preventDefault();
+    const r = view.getBoundingClientRect(), d = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
+    zoomAt(s * Math.exp(-d * .0018), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  $$("[data-z]", box).forEach(b => b.onclick = () => b.dataset.z === "reset" ? fit() : zoomAt(s * (b.dataset.z === "in" ? 1.6 : 1 / 1.6), vw() / 2, vh() / 2));
+  view.addEventListener("dblclick", e => { if (e.target.closest(".mk,.mapctl")) return; const r = view.getBoundingClientRect(); zoomAt(s * (e.shiftKey ? 1 / 2 : 2), e.clientX - r.left, e.clientY - r.top); });
+  view.addEventListener("keydown", e => {
+    const k = {"+": [1.4], "=": [1.4], "-": [1 / 1.4], ArrowLeft: [1, 60, 0], ArrowRight: [1, -60, 0], ArrowUp: [1, 0, 60], ArrowDown: [1, 0, -60]}[e.key];
+    if (!k) return; e.preventDefault();
+    if (k.length === 1) zoomAt(s * k[0], vw() / 2, vh() / 2); else { tx += k[1]; ty += k[2]; apply(); }
+  });
+  // drag to pan (any zoom) + two-finger pinch
+  const ptrs = new Map(); let last = null, moved = 0, pinch = null;
+  view.addEventListener("pointerdown", e => {
+    if (e.target.closest(".mapctl") || (e.button !== 0 && e.pointerType === "mouse")) return;
+    ptrs.set(e.pointerId, {x: e.clientX, y: e.clientY}); view.setPointerCapture(e.pointerId);
+    if (ptrs.size === 1) moved = 0;
+    last = {x: e.clientX, y: e.clientY}; view.classList.add("dragging");
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = {d: Math.hypot(a.x - b.x, a.y - b.y) || 1, s}; }
+  });
+  view.addEventListener("pointermove", e => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (ptrs.size === 2 && pinch) {
+      const [a, b] = [...ptrs.values()], r = view.getBoundingClientRect();
+      zoomAt(pinch.s * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top); moved = 99; return;
+    }
+    const dx = e.clientX - last.x, dy = e.clientY - last.y; last = {x: e.clientX, y: e.clientY};
+    moved += Math.abs(dx) + Math.abs(dy); tx += dx; ty += dy; apply();
+  });
+  const up = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) view.classList.remove("dragging"); else last = [...ptrs.values()][0]; };
+  view.addEventListener("pointerup", up); view.addEventListener("pointercancel", up);
+  view.addEventListener("click", e => {
+    const mk = e.target.closest(".mk"); if (!mk || moved > 5) return;
+    const m = md.markers[+mk.dataset.i];
+    info.innerHTML = `<b>${esc(m.l)}</b> <span class="eyebrow">${esc(MK[m.c][0])}</span>`;
+  });
+  // toggles
+  $$(".tg[data-cat]", box).forEach(b => b.onclick = () => {
+    const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); st[b.dataset.cat] = on; LS.set("gf-mapview", st);
+    $$(`#mapinner [data-c="${b.dataset.cat}"]`).forEach(m => m.classList.toggle("off", !on));
+  });
+  $$(".tg[data-opt]", box).forEach(b => b.onclick = () => {
+    const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); st[b.dataset.opt] = on; LS.set("gf-mapview", st);
+    if (b.dataset.opt === "heat") { inner.classList.toggle("nodepth", !on); $("#dlegend").hidden = !on; } else inner.classList.toggle("nolabels", !on);
+  });
+  // bait finder: highlight and frame every spawn of that bait
+  $$(".baitchips [data-bk]", box).forEach(b => b.onclick = () => {
+    const on = b.getAttribute("aria-pressed") !== "true";
+    $$(".baitchips [data-bk]", box).forEach(x => x.setAttribute("aria-pressed", "false")); $$("#mapinner .mk.hl").forEach(x => x.classList.remove("hl"));
+    if (!on) { info.textContent = "Click a marker for its name."; return; }
+    b.setAttribute("aria-pressed", "true");
+    const hits = $$(`#mapinner .mk[data-b="${CSS.escape(b.dataset.bk)}"]`);
+    hits.forEach(x => { x.classList.add("hl"); x.classList.remove("off"); });
+    const ms = hits.map(x => md.markers[+x.dataset.i]), xs = ms.map(m => m.x), ys = ms.map(m => m.y);
+    const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys), 12);
+    centerOn((Math.max(...xs) + Math.min(...xs)) / 2, (Math.max(...ys) + Math.min(...ys)) / 2, Math.min(4, 70 / span));
+    info.innerHTML = `<b>${esc(b.textContent)}</b>: ${hits.length} spawn${hits.length > 1 ? "s" : ""} highlighted`;
+  });
+}
+
+function renderMap(id) {
+  const m = MAPID[id]; if (!m) { location.hash = "#maps"; return; }
+  const fs = FISH.filter(f => f.maps.includes(m.code)).sort((a, b) => b.val - a.val);
+  const only = fs.filter(f => f.maps.filter(c => c !== "T").length === 1);
+  const got = fs.filter(f => CAUGHT.has(f.id)).length;
+  $("#v-map").innerHTML = `
+  <div class="crumbs"><a href="#maps">Maps</a> / ${esc(m.name)}</div>
+  <div class="dossier" style="--mc:${m.color}">
+    <aside class="rail">
+      <div class="panel">
+        ${MAPIMG[m.id] ? `<img src="${MAPIMG[m.id]}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#000;margin-bottom:8px;cursor:pointer" onclick="document.getElementById('mapbox').scrollIntoView({behavior:'smooth'})">` : `<div class="swatch">${WAVES}</div>`}
+        <h1>${esc(m.name)}</h1>
+        <dl class="facts"><dt>Unlock</dt><dd>${esc(m.unlock)}</dd><dt>Species</dt><dd>${fs.length}</dd><dt>Only here</dt><dd>${only.length}</dd><dt>Depth</dt><dd>${esc(m.depth)}</dd><dt>Caught</dt><dd>${got}/${fs.length}</dd></dl>
+        <div class="bar"><i style="width:${fs.length ? got / fs.length * 100 : 0}%;background:${m.color}"></i></div>
+      </div>
+      <div class="panel"><div class="eyebrow">Other maps</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${MAPS.filter(x => x !== m).map(x => `<a class="chip" href="#map-${x.id}"><span class="sw" style="background:${x.color}"></span>${esc(x.name)}</a>`).join("")}</div></div>
+    </aside>
+    <div class="content">
+      ${mapViewer(m.id)}
+      <div class="gh">
+        <div class="callout"><h3>Layout</h3><ul>${m.layout.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>
+        <div class="callout"><h3>Tips</h3><ul>${m.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>
+        ${m.threats.length ? `<div class="hazbox"><h3>Threats</h3><ul>${m.threats.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
+        <div class="panel"><h2>Bait here</h2><p style="margin:0;font-size:14px">${esc(m.baits)}</p>${m.sig.length ? `<h2 style="margin-top:10px">Signature catches</h2><p style="margin:0">${m.sig.map(s => `<button class="fishlink" data-pop="${slug(s)}">${esc(s)}</button>`).join(" · ")}</p>` : ""}</div>
+      </div>
+      <div class="panel"><h2>Fish on the ${esc(m.name)} <span class="eyebrow">(by value)</span></h2>
+        <div class="tablewrap"><table class="t"><thead><tr><th>✓</th><th>Fish</th><th>Tier</th><th class="n">Max value</th><th class="n">Avg lb</th><th class="n">Record lb</th><th class="n">Catch share</th><th>Maps</th></tr></thead><tbody>${fs.map(f => fishRow(f).replace(f.n + "</button>", f.n + "</button>" + (only.includes(f) ? ' <span class="tag m">only here</span>' : ""))).join("")}</tbody></table></div>
+      </div>
+    </div>
+  </div>`;
+  wireMap();
+}
+
+/* ---------- threats ---------- */
+function renderThreats() {
+  const col = t => /Immune/.test(t.tnt) ? "var(--bad)" : /TNT/.test(t.tnt) ? "var(--ok)" : t.tnt === "Boss fight" ? "var(--special)" : "var(--line)";
+  $("#v-threats").innerHTML = `
+  <div class="gh" style="margin-bottom:10px">
+    <div class="callout"><h3>Ground rules</h3><ul>
+      <li>Monsters come out after dusk. Make quota, wait for the <b>blue flame</b>, and sleep.</li>
+      <li>Most monsters die to <b>one well-timed TNT</b>. Crab Queen takes 2, Troll takes 3 (official FAQ).</li>
+      <li>Many corpses become high-score <b>ragdoll bait</b>. Killing things pays off.</li>
+      <li>Monsters track footsteps and voices. Placed torches slow the Stalker.</li>
+    </ul></div>
+    <div class="hazbox"><h3>Cannot be killed: just run</h3><ul>
+      <li>Flying NightTerrors · Hallucinations (e.g. Large Crab) · Larry The Late Night Crab · the HEV · the Jumping Shark</li>
+      <li>Big Fish Man is reported to be immune too. Be asleep when it comes.</li></ul></div>
+  </div>
+  <div class="tcards">${THREATS.map(t => `<div class="tc" style="--tcol:${col(t)}" id="t-${slug(t.n)}"><header><h3>${esc(t.n)}</h3>${srcTag(t.src)}</header>
+    <div class="meta"><b>Where</b>${esc(t.map)} · <b>Kill</b>${esc(t.tnt)}${t.when ? ` · <b>When</b>${esc(t.when)}` : ""}</div>
+    <p>${esc(t.how)}</p>${t.tip ? `<p class="how"><b>Do</b>${esc(t.tip)}</p>` : ""}</div>`).join("")}</div>
+  <p class="eyebrow" style="margin-top:8px">The official FAQ only lists names. Behaviour notes come from fan wikis; "community" means player reports the wikis mark unconfirmed.</p>`;
+}
+
+/* ---------- upgrades ---------- */
+function renderUpgrades() {
+  $("#v-upgrades").innerHTML = `
+  <div class="gh">
+    <div class="panel"><h2>Upgrade priority</h2>${UPGRADES.map(u => `<div class="row2" style="margin:6px 0"><span class="tier ${u.t}">${u.t}</span><div><b>${esc(u.n)}</b> ${srcTag(u.src)}<br><span style="font-size:14px">${esc(u.eff)}</span></div></div>`).join("")}
+      <p class="eyebrow" style="margin-top:8px">In co-op, gold and totems are shared. Rod, line, sinker, perks and inventory are personal.</p></div>
+    <div class="panel"><h2>Totems <span class="eyebrow">permanent per run · lobby-wide</span></h2>${TOTEMS.map(t => `<div style="border-top:1px solid var(--line);padding:6px 0"><b>${t.rank}. ${esc(t.n)}</b><div style="font-size:14px">${esc(t.eff)}</div>${t.lv ? `<div class="mono" style="font-size:12px;color:var(--muted)">${esc(t.lv)}</div>` : ""}<div style="font-size:13px;color:var(--accent)">${esc(t.note)}</div></div>`).join("")}
+      <p class="eyebrow" style="margin-top:6px">Totems survive missed quotas and reloads, and reset on a new run. Price scales with lobby size. If a bought totem doesn't appear, reload the save.</p></div>
+  </div>
+  <h2 style="font-size:18px;margin:12px 0 8px">Perks <span class="eyebrow">one unlocks per 7 days survived · up to 2 active</span></h2>
+  <div class="tcards">${PERKS.map(p => `<div class="tc"><header><span class="tier ${p.tier === "–" ? "x" : p.tier}">${p.tier}</span><h3>${esc(p.n)}</h3></header><p>${esc(p.eff)}</p>${p.note ? `<p class="meta">${esc(p.note)}</p>` : ""}</div>`).join("")}</div>
+  <div class="gh" style="margin-top:10px">
+    <div class="callout"><h3>Builds (wiki picks)</h3><ul>
+      <li><b>Solo:</b> Sticky Hook + Fish Whisperer</li>
+      <li><b>Co-op angler:</b> Sticky Hook + Fish Whisperer</li>
+      <li><b>Co-op support:</b> Midas Touch + Bait Carepackage</li>
+      <li><b>Co-op runner:</b> Sticky Hook + Trained Runner</li></ul></div>
+    <div class="panel"><h2>Shop notes</h2><ul style="margin:0;padding-left:18px;font-size:14px">
+      <li>Fishing rod 5 gold · Smoker 25 gold (after cuts).</li>
+      <li>About a third of shop items were cut 30% on 10-22.</li>
+      <li>Line/rod/sinker upgrades −15%, −10% more at level 7.</li>
+      <li>Beer adds to bait score and fish weight. Buy before rain.</li>
+      <li>Skeeter's trade gives a musket twice as often since 10-22.</li>
+      <li><b>Heart:</b> sacrifice at the altar for one extra life (solo) or to revive a teammate (co-op). A solo heart is lost if you leave.</li>
+      <li><b>MOBY rod:</b> endgame rod from beating the Lake Entity. Needed for Rhizodus.</li></ul></div>
+  </div>`;
+}
+
+/* ---------- calculator ---------- */
+function renderCalc() {
+  $("#v-calc").innerHTML = `
+  <div class="calc">
+    <div class="panel"><h2>Point value calculator</h2>
+      <label class="f"><span>Fish <small>sets the base to its max value</small></span><input list="fishlist" id="cfish" placeholder="Type a fish…"><datalist id="fishlist">${FISH.map(f => `<option value="${esc(f.n)}">`).join("")}</datalist></label>
+      <label class="f"><span>Base value <small>shown when you catch it</small></span><input type="number" id="cbase" value="300" min="0"></label>
+      <label class="f"><span>Fish Value upgrade <small id="cfvl">0%</small></span><input type="range" id="cfv" min="0" max="50" step="5" value="0"></label>
+      <label class="f"><span>Cooked <small>official FAQ example: +50%</small></span><select id="ccook"><option value="0">Raw</option><option value="33">Cooked +33% (fan wiki)</option><option value="50" selected>Cooked +50% (FAQ)</option></select></label>
+      <label class="f"><span>Gamble result <small>max 10× (official FAQ)</small></span><select id="cgam"><option value="1" selected>Not gambled</option><option value="0">Lost (×0)</option>${[2, 3, 4, 5, 6, 7, 8, 9, 10].map(x => `<option value="${x}">×${x}</option>`).join("")}</select></label>
+      <label class="f"><span>Leviathan's Totem</span><select id="clev"><option value="1">None</option><option value="1.10">Lv1 ×1.10</option><option value="1.15">Lv2 ×1.15</option><option value="1.20">Lv3 ×1.20</option><option value="1.25">Lv4 ×1.25</option></select></label>
+      <label class="f"><span>Fish Whisperer perk <small>+5% at catch</small></span><input type="checkbox" id="cwh" style="justify-self:start;width:18px;height:18px;accent-color:var(--accent)"></label>
+      <label class="f"><span>Quota left today <small>optional</small></span><input type="number" id="cquota" placeholder="e.g. 2500" min="0"></label>
+    </div>
+    <div class="panel"><div class="eyebrow">Estimated value</div><div class="big" id="cout">0</div><div class="steps" id="csteps"></div><p id="cq" style="font-size:15px"></p>
+      <div class="callout" style="margin-top:10px"><h3>Read this</h3><ul>
+        <li>Cooking and gambling both multiply, so <b>order doesn't matter</b>. FAQ example: 50 → cooked 75 → 10× gamble = 750.</li>
+        <li>Gambling odds have been tuned several times (+8% win odds on 10-22). One reported split: 65% lose / 35% win. Don't gamble the fish you need for quota.</li>
+        <li>Leviathan and Fish Whisperer are applied at catch. If the base you entered already includes them, leave them off.</li>
+        <li>This is an estimate from the multipliers the FAQ and wikis publish. The game's exact rounding isn't documented.</li></ul></div></div>
+  </div>`;
+  const run = () => {
+    const base = +$("#cbase").value || 0, fv = +$("#cfv").value, cook = +$("#ccook").value, gam = +$("#cgam").value, lev = +$("#clev").value, wh = $("#cwh").checked ? 1.05 : 1;
+    $("#cfvl").textContent = `+${fv}%`;
+    const steps = [["Base", base]];
+    let v = base;
+    if (lev !== 1) { v *= lev; steps.push([`Leviathan ×${lev.toFixed(2)}`, v]); }
+    if (wh !== 1) { v *= wh; steps.push(["Fish Whisperer ×1.05", v]); }
+    if (fv) { v *= 1 + fv / 100; steps.push([`Fish Value +${fv}%`, v]); }
+    if (cook) { v *= 1 + cook / 100; steps.push([`Cooked +${cook}%`, v]); }
+    if (gam !== 1) { v *= gam; steps.push([`Gamble ×${gam}`, v]); }
+    $("#cout").textContent = fmt(Math.round(v));
+    $("#csteps").innerHTML = steps.map(([k, x]) => `<div><span>${k}</span><b>${fmt(Math.round(x))}</b></div>`).join("");
+    const q = +$("#cquota").value;
+    $("#cq").innerHTML = q > 0 && v > 0 ? `≈ <b>${Math.ceil(q / v)}</b> of these to fill ${fmt(q)} quota.` : "";
+  };
+  $("#cfish").oninput = e => { const f = FISH.find(x => x.n.toLowerCase() === e.target.value.toLowerCase()); if (f) { $("#cbase").value = f.val; run(); } };
+  $$("#v-calc input, #v-calc select").forEach(x => x.addEventListener("input", run));
+  run();
+}
+
+/* ---------- guides ---------- */
+const GUIDES = [
+ ["start", "Your first run", `
+  <ol><li><b>Grab bait</b> around the Lake cabin: worms outside, frogs on the island between cabins, lizards by the altar, spiders in the second cabin.</li>
+  <li><b>Cast from the dock.</b> Hold to charge, release to cast. On a bite, click while the marker is in the green band (centre is best). Hold to reel and let go when tension spikes. Hold too long and the line snaps.</li>
+  <li><b>Cook before you sacrifice.</b> The grill takes about 60 s per fish, one at a time. Start cooking early.</li>
+  <li><b>Sacrifice</b> at the altar (left of the starting cabin) with <kbd>G</kbd> or left click until the flame turns <b>blue</b>. Check remaining quota in the <kbd>Esc</kbd> menu.</li>
+  <li><b>Sell extras</b> to the trader. Spend on the <b>Big Grill</b> and <b>Fish Value</b> first, and buy the <b>minnow trap</b> for free bait every morning.</li>
+  <li><b>Sleep</b> once the flame is blue. Stay inside after dusk.</li></ol>
+  <p>Stuck in the world? Use the <b>unstuck button</b> in the pause menu.</p>`],
+ ["quota", "Quota & the altar", `
+  <ul><li>The quota grows each day, and faster with more players. The current target is in the <kbd>Esc</kbd> menu.</li>
+  <li>The flame grows as you near quota. <b>Blue</b> means the lake is satisfied. <b>Purple</b> means a heart was sacrificed.</li>
+  <li>Miss quota and the night hunts you. Miss too many in a row and the lake breaks the cabin wall: run over.</li>
+  <li><b>Arctic snow:</b> make quota that day or it's game over.</li>
+  <li><b>Slowing Metabolism</b> totem lowers the quota continuously. Beating the boss slows quota growth (not on Jeremy Wade).</li>
+  <li>Cooked fish count for more. Gamble only surplus fish.</li></ul>`],
+ ["bigguns", "Catching Bigguns & Legendaries", `
+  <p>Official FAQ recipe: <b>max Sinker</b> + <b>Beer</b> + <b>Leviathan's Totem</b> by around <b>day 40</b>, fishing at <b>2,500+ depth</b>.</p>
+  <ul><li>Use bait with value <b>60+</b>. Top picks: Sleeping Troll Ragdoll (86), Spider Creature (85), Stalker/Snake/Polar Bear ragdolls (82), Moose and Ivan (80).</li>
+  <li>Legendary bites need a <b>total bait score of 175+</b>. Bait, beer, day count, difficulty and Leviathan all stack toward it.</li>
+  <li>Rain improves quality and thunderstorms are stronger. Drink beer before the storm.</li>
+  <li>Every map has a 4,500+ depth spot. Early lines snap if you go too deep, so upgrade the line first.</li>
+  <li>Each map has its own Legendary. The Jungle and Arctic have Mythics instead. Rhizodus (Lake) needs the boss beaten and the MOBY rod.</li>
+  <li>Legendary/Mythic achievements unlock for the whole lobby.</li></ul>
+  <div class="tablewrap"><table class="t"><thead><tr><th>Big one</th><th>Map</th><th class="n">Max value</th><th class="n">Record lb</th><th class="n">Logged</th></tr></thead><tbody>
+  ${FISH.filter(f => f.tier === "l").sort((a, b) => b.val - a.val).map(f => `<tr><td><button class="fishlink" data-pop="${f.id}">${esc(f.n)}</button></td><td>${mapDots(f.maps)}</td><td class="n">${fmt(f.val)}</td><td class="n">${fmt(f.best)}</td><td class="n">${f.catches}</td></tr>`).join("")}</tbody></table></div>`],
+ ["boss", "The Lake Entity (final boss)", `
+  <p>Added in 1.0. Beating it is the ending: you unlock the <b>MOBY rod</b> and <b>Jeremy Wade</b> difficulty, and quota growth slows afterwards (standard difficulty).</p>
+  <ul><li><b>Eyeball:</b> the weak point. Its hitbox was made 50% bigger on 10-22.</li>
+  <li><b>Rolling turtles:</b> 60 damage each (was 75). Hitboxes are smaller and gaps wider now. Look for the gaps.</li>
+  <li><b>Whale nuke:</b> a big hit. It used to be invisible but still did damage (fixed 10-22).</li>
+  <li>Health regen starts after 6 s without damage (was 7.5 s) and heals 10% faster. Back off to heal.</li>
+  <li>Jeremy Wade: boss HP +20% and your healing is halved.</li></ul>
+  <p class="eyebrow">How to trigger the fight and its exact phases aren't documented yet.</p>`],
+ ["coop", "Co-op (1–8 players)", `
+  <ul><li><b>Shared:</b> gold, totems (one buy buffs everyone; price scales with lobby size).</li>
+  <li><b>Personal:</b> rod, line, sinker, perks, fish inventory.</li>
+  <li>Monsters track footsteps and voices. Keep noise down at night.</li>
+  <li>A <b>heart</b> sacrificed at the altar revives one fallen teammate.</li>
+  <li>Split roles: one or two <b>anglers</b> (Sticky Hook + Fish Whisperer), a <b>support</b> who runs bait, the grill and the trader (Midas Touch + Bait Carepackage), and a <b>runner</b> for night errands (Trained Runner).</li>
+  <li>Online only: no split-screen, LAN or crossplay. Windows / Steam.</li></ul>`],
+ ["modes", "Difficulty modes", `
+  <ul><li><b>Hardcore:</b> permadeath, bait destroyed on save reload, no day resetting. The save is deleted on game over.</li>
+  <li><b>Jeremy Wade:</b> unlocked by beating the boss. Forces Hardcore, +20% fish weight on leaderboard submissions, better Legendary/Mythic odds (community), higher prices, no quota relief after the boss, boss HP +20%, healing halved. Heart revives were removed and then restored on 10-28.</li></ul>`],
+ ["tricks", "Misc tricks", `
+  <ul><li>Boat: <b>Jungle only</b>, spawned from the <kbd>Esc</kbd> menu.</li>
+  <li>Beer visual effects can be turned off in the pause menu.</li>
+  <li>Leaving a bone on the altar overnight reportedly brings a dog (community, unconfirmed).</li>
+  <li>Docks are ~500 depth and reach most fish.</li>
+  <li>Report missing stats via the ticket system on gonefishing.gg. Report bugs in the Discord #bug-reports channel, with video.</li></ul>`]
+];
+function renderGuides(focus) {
+  $("#v-guides").innerHTML = `<div class="gtoc">${GUIDES.map(([id, t]) => `<a class="chip" href="#guides/${id}">${esc(t)}</a>`).join("")}</div>
+  <div class="notes" style="max-width:980px">${GUIDES.map(([id, t, h]) => `<section class="guide" id="g-${id}"><h2>${esc(t)}</h2>${h}</section>`).join("")}</div>`;
+  if (focus) { const el = $("#g-" + focus); if (el) { el.scrollIntoView(); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1200); } }
+}
+
+/* ---------- catch book ---------- */
+function renderCatchbook() {
+  const leg = FISH.filter(f => f.tier === "l");
+  $("#v-catchbook").innerHTML = `
+  <div class="hero" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <div class="panel"><h2>Catch book</h2>
+      <div class="stats" style="margin-top:0"><div class="stat"><b style="color:var(--accent)">${CAUGHT.size}/${FISH.length}</b><span style="color:var(--muted)">species</span></div><div class="stat"><b style="color:var(--gold)">${leg.filter(f => CAUGHT.has(f.id)).length}/${leg.length}</b><span style="color:var(--muted)">legendary / mythic</span></div></div>
+      <div class="bar"><i style="width:${CAUGHT.size / FISH.length * 100}%"></i></div>
+      <p class="eyebrow" style="margin-top:8px">Tick fish here, on the Fish tab, or on any map page.</p>
+      <div class="share" style="margin-top:8px"><div class="eyebrow">Backup / share code</div><textarea id="code" readonly></textarea>
+      <div style="display:flex;gap:6px;margin-top:6px"><button class="btn" id="copy">Copy</button><button class="btn" id="load">Load code…</button><button class="btn" id="reset">Reset</button></div></div>
+    </div>
+    <div class="panel"><h2>Goals</h2><div class="goals">${GOALS.map(g => `<div><h3>${esc(g.g)}</h3><ul>${g.items.map(([id, t]) => `<li><label><input type="checkbox" class="ck" data-g="${id}" ${GOALSDONE.has(id) ? "checked" : ""}> ${esc(t)}</label></li>`).join("")}</ul></div>`).join("")}</div></div>
+  </div>
+  <div class="cb-maps">${MAPS.map(m => { const fs = FISH.filter(f => f.maps.includes(m.code)); const g = fs.filter(f => CAUGHT.has(f.id)).length;
+    return `<a class="mcard" style="--mc:${m.color}" href="#map-${m.id}"><b>${esc(m.name)}</b><small>${g}/${fs.length} caught</small><div class="bar"><i style="width:${fs.length ? g / fs.length * 100 : 0}%"></i></div></a>`; }).join("")}</div>
+  <div class="panel"><h2>Still to catch <span class="eyebrow">(rarest last)</span></h2><div style="display:flex;flex-wrap:wrap;gap:4px">${FISH.filter(f => !CAUGHT.has(f.id)).sort((a, b) => b.catches - a.catches).map(f => `<button class="chip" data-pop="${f.id}" style="cursor:pointer"><span class="tag ${tierCls(f)}" style="padding:0 3px">${f.tier.toUpperCase()}</span>${esc(f.n)}</button>`).join("") || "<p>Everything! 🎣</p>"}</div></div>`;
+  const code = btoa(JSON.stringify({c: [...CAUGHT], g: [...GOALSDONE]}));
+  $("#code").value = code;
+  $("#copy").onclick = () => { $("#code").select(); navigator.clipboard?.writeText(code); };
+  $("#load").onclick = () => { const s = prompt("Paste a catch book code:"); if (!s) return; try { const o = JSON.parse(atob(s.trim())); CAUGHT = new Set(o.c || []); GOALSDONE = new Set(o.g || []); saveCaught(); LS.set("gf-goals", [...GOALSDONE]); renderCatchbook(); } catch { alert("That code didn't work."); } };
+  $("#reset").onclick = () => { if (confirm("Clear your whole catch book and goals?")) { CAUGHT = new Set(); GOALSDONE = new Set(); saveCaught(); LS.set("gf-goals", []); renderCatchbook(); } };
+  $$("input[data-g]").forEach(x => x.onchange = () => { x.checked ? GOALSDONE.add(x.dataset.g) : GOALSDONE.delete(x.dataset.g); LS.set("gf-goals", [...GOALSDONE]); });
+}
+
+/* ---------- notes ---------- */
+function renderNotes() {
+  $("#v-notes").innerHTML = `<div class="notes">
+  <h2>How current is this?</h2>
+  <p>Written for <b>v1.0</b> (released 2026-10-20) and patches through <b>2026-11-11</b>. Fish and bait numbers are a community catch-data snapshot from 2026-10-21 (410,550 catches from 8,375 anglers). Values can shift with balance patches.</p>
+  <h2>What the numbers mean</h2>
+  <ul><li><b>Max value</b>: the highest point value seen in logged catches. Not a guaranteed price.</li>
+  <li><b>Catch share</b>: how often a species is logged. It reflects where players fish too, so treat it as rough rarity.</li>
+  <li><b>Tier</b> groups follow the fan wiki: Common, Mid, and Legendary+ (Legendary and Mythic are not labelled per fish, except Rhizodus).</li>
+  <li><b>Bait "Maps"</b>: how many maps the bait was logged on.</li></ul>
+  <h2>Patch log</h2>
+  <div class="tablewrap"><table class="t log"><tbody>${PATCHES.slice().reverse().map(([d, t]) => `<tr><td class="mono" style="white-space:nowrap">${d}</td><td>${esc(t)}</td></tr>`).join("")}</tbody></table></div>
+  <h2>Not covered yet</h2>
+  <ul><li>Per-fish bait, depth, weather or time requirements (not published anywhere yet).</li><li>Quota numbers per day, full shop prices, trinket names.</li><li>Unlock conditions for Canyon and Arctic, and how the boss fight is triggered.</li></ul>
+  <h2>Sources</h2>
+  <ul><li><a href="https://gonefishing.gg/faq" target="_blank" rel="noopener">Official FAQ (gonefishing.gg)</a></li>
+  <li><a href="https://gonefishing.gg/" target="_blank" rel="noopener">gonefishing.gg</a> player API: the Player tab (profile, catches, species, gambles, challenges, live catch stream)</li>
+  <li><a href="https://gonefishing.gg/map" target="_blank" rel="noopener">gonefishing.gg interactive map</a>: top-down map images, marker positions, depth heatmap (fetched 2026-11-19)</li>
+  <li><a href="https://store.steampowered.com/app/3645890/GONE_Fishing/" target="_blank" rel="noopener">Steam store page</a></li>
+  <li><a href="https://gonefishingwiki.com/" target="_blank" rel="noopener">gonefishingwiki.com</a>: fish list, bait guide, totems, maps, update log</li>
+  <li><a href="https://gonefishingwiki.vercel.app/" target="_blank" rel="noopener">gonefishingwiki.vercel.app</a>: perks, enemies, boss, co-op</li>
+  <li><a href="https://gonefishing.fandom.com/wiki/Gone_Fishing_Wiki" target="_blank" rel="noopener">GONE Fishing Fandom wiki</a></li></ul>
+  </div>`;
+}
+
+/* ---------- fish popover ---------- */
+const pop = $("#pop");
+function showPop(id, anchor) {
+  const f = FISHBY[id]; if (!f) return;
+  pop.innerHTML = `<button class="pclose" aria-label="Close">×</button><span class="tag ${tierCls(f)}">${tierLabel(f)}</span><b class="ttl">${esc(f.n)}</b>
+    ${f.note ? `<p>${esc(f.note)}</p>` : ""}
+    <dl class="facts"><dt>Max value</dt><dd>${fmt(f.val)}</dd><dt>Avg weight</dt><dd>${fmt(f.avg)} lb</dd><dt>Record</dt><dd>${fmt(f.best)} lb</dd><dt>Logged</dt><dd>${fmt(f.catches)} (${(f.share * 100).toFixed(3)}%)</dd><dt>Maps</dt><dd>${mapDots(f.maps)}</dd></dl>
+    <p style="margin-top:8px"><label><input type="checkbox" class="ck" data-f="${f.id}" ${CAUGHT.has(f.id) ? "checked" : ""}> Caught</label> · <a href="#calc" data-calc="${f.id}">Value calc →</a></p>`;
+  pop.hidden = false;
+  const r = anchor.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let x = Math.min(r.left, innerWidth - pw - 10), y = r.bottom + 6;
+  if (y + ph > innerHeight - 10) y = Math.max(10, r.top - ph - 6);
+  pop.style.left = Math.max(10, x) + "px"; pop.style.top = y + "px";
+}
+document.addEventListener("click", e => {
+  const p = e.target.closest("[data-pop]");
+  if (p) { e.preventDefault(); showPop(p.dataset.pop, p); return; }
+  const c = e.target.closest("[data-calc]");
+  if (c) { pop.hidden = true; const f = FISHBY[c.dataset.calc]; setTimeout(() => { $("#cfish").value = f.n; $("#cbase").value = f.val; $("#cbase").dispatchEvent(new Event("input")); }, 0); return; }
+  if (e.target.closest(".pclose") || (!pop.hidden && !e.target.closest("#pop"))) pop.hidden = true;
+});
+document.addEventListener("change", e => { const x = e.target; if (x.matches("input.ck[data-f]")) toggleCaught(x.dataset.f, x.checked); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { pop.hidden = true; $("#results").classList.remove("show"); } });
+
+/* ---------- search ---------- */
+const IDX = [
+  ...FISH.map(f => ({k: "fish", t: f.n, s: `${tierLabel(f)} · max ${fmt(f.val)} · ${f.maps.map(c => MAPBY[c].name).join(", ")}`, go: () => { fishState = {map: "all", tier: "all", q: "", hide: false}; if (location.hash === "#fish") renderFish(); else location.hash = "#fish"; setTimeout(() => { const bb = $(`#v-fish [data-pop="${f.id}"]`); if (!bb) return; bb.scrollIntoView({block: "center"}); showPop(f.id, bb); }, 40); }})),
+  ...BAIT.map(b => ({k: "bait", t: b.n, s: `score ${b.score} · ${b.tier}${b.note ? " · " + b.note : ""}`, go: () => { location.hash = "#bait"; setTimeout(() => { $("#bq").value = b.n; $("#bq").dispatchEvent(new Event("input")); }, 30); }})),
+  ...THREATS.map(t => ({k: "threat", t: t.n, s: `${t.map} · ${t.tnt}`, go: () => { location.hash = "#threats"; setTimeout(() => $("#t-" + slug(t.n))?.scrollIntoView({block: "center"}), 30); }})),
+  ...MAPS.map(m => ({k: "map", t: m.name, s: `unlock ${m.unlock}`, go: () => location.hash = "#map-" + m.id})),
+  ...PERKS.map(p => ({k: "perk", t: p.n, s: p.eff, go: () => location.hash = "#upgrades"})),
+  ...TOTEMS.map(p => ({k: "totem", t: p.n, s: p.eff, go: () => location.hash = "#upgrades"})),
+  ...GUIDES.map(([id, t]) => ({k: "guide", t, s: "", go: () => location.hash = "#guides/" + id})),
+  {k: "player", t: "My player profile", s: "live stats from gonefishing.gg", go: () => location.hash = "#player"}
+];
+let hits = [], sel = 0;
+const res = $("#results");
+const drawRes = () => { res.innerHTML = hits.map((h, i) => `<a data-i="${i}" class="${i === sel ? "sel" : ""}"><span class="k">${h.k}</span>${esc(h.t)}<small>${esc(h.s)}</small></a>`).join(""); res.classList.toggle("show", hits.length > 0); };
+$("#q").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase(); sel = 0;
+  hits = !q ? [] : IDX.map(h => { const t = h.t.toLowerCase(); const sc = t.startsWith(q) ? 0 : t.includes(q) ? 1 : h.s.toLowerCase().includes(q) ? 2 : 9; return [sc, h]; }).filter(x => x[0] < 9).sort((a, b) => a[0] - b[0]).slice(0, 12).map(x => x[1]);
+  drawRes();
+});
+$("#q").addEventListener("keydown", e => {
+  if (e.key === "ArrowDown") { sel = Math.min(sel + 1, hits.length - 1); drawRes(); e.preventDefault(); }
+  else if (e.key === "ArrowUp") { sel = Math.max(sel - 1, 0); drawRes(); e.preventDefault(); }
+  else if (e.key === "Enter" && hits[sel]) { pick(sel); }
+});
+const pick = i => { const h = hits[i]; res.classList.remove("show"); $("#q").value = ""; hits = []; h.go(); };
+res.addEventListener("mousedown", e => { const a = e.target.closest("a[data-i]"); if (a) { e.preventDefault(); pick(+a.dataset.i); } });
+$("#q").addEventListener("blur", () => setTimeout(() => res.classList.remove("show"), 150));
+
+/* ---------- player (gonefishing.gg profile, live) ---------- */
+const GG = "https://gonefishing.gg";
+const MAPNAME = {"The Lake": "lake", "The Jungle": "jungle", "The Swamp": "swamp", "The Canyon": "canyon", "The Canyons": "canyon", "The Arctic": "arctic"};
+/* world -> image calibration from gonefishing.gg's interactive map (pixel space 0..10000) */
+const PCAL = {
+  lake: [6.2149, -.00769, .02219, 6.1889, -24103.6, -19346],
+  canyon: [11.533540935366318, -.02805048689798828, -.018813078867083277, 11.50680765193157, -12273.818390804343, -27057.73353155004],
+  swamp: [11.215095490489983, -.014471909312340436, -.05988141986953632, 11.177185726997578, -53897.81263221703, -42024.39086278273],
+  jungle: [9.362363624897519, .10933551953921523, .022387589077381666, 9.398099682579723, -47391.29816064407, -10112.34241449624],
+  arctic: [10.174784193159674, -.0022103329658857973, -.016958097946627504, 10.18410772364518, -67517.22582287056, -75290.5121408237]};
+const w2pct = (mid, x, y) => { const c = PCAL[mid]; if (!c) return null; const [ax, ay, bx, by, cx, cy] = c, det = ax * by - ay * bx, u = x - cx, v = y - cy; return {x: (by * u - ay * v) / det / 100, y: (-bx * u + ax * v) / det / 100}; };
+const ago = t => { const s = (Date.now() - new Date(t)) / 1000; if (!isFinite(s)) return "—"; if (s < 60) return "just now"; if (s < 3600) return `${Math.floor(s / 60)} min ago`; if (s < 86400) return `${Math.floor(s / 3600)} h ago`; return `${Math.floor(s / 86400)} d ago`; };
+const lb = n => n == null ? "—" : `${fmt(+n)} lb`;
+const timeLeft = t => { const s = (new Date(t) - Date.now()) / 1000; if (s <= 0) return "ended"; const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60); return d ? `${d}d ${h}h left` : h ? `${h}h ${m}m left` : `${m}m left`; };
+
+const PL = {id: (new URLSearchParams(location.search).get("player") || "").replace(/\D/g, "") || LS.get("gf-player", ""), api: undefined, mode: "loading", player: null, recent: [], species: [], gambles: null, catches: [], challenges: [], fetchedAt: null, es: null, liveIds: new Set(), global: [], globalTimes: [], err: ""};
+const PLF = {map: "all", fish: "", sortKey: "t", dir: -1};
+
+async function tryJson(url, ms = 6000) {
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), ms);
+  try { const r = await fetch(url, {signal: ctl.signal, cache: "no-store"}); if (!r.ok) throw new Error(r.status); return await r.json(); } finally { clearTimeout(to); }
+}
+async function detectApi() {
+  if (PL.api !== undefined) return PL.api;
+  const cands = [];
+  const custom = LS.get("gf-proxy", "");
+  if (custom) cands.push(custom.endsWith("/") ? custom : custom + "/");
+  if (/^https?:/.test(location.protocol)) cands.push(location.origin + "/gf-api/");
+  cands.push(GG + "/api/");  // works only if the site ever enables CORS
+  for (const c of cands) { try { await tryJson(c + "seasons", 4000); PL.api = c; return c; } catch {} }
+  PL.api = null; return null;
+}
+const normCatch = c => ({id: c.id, fishtype: c.fishtype, weight: +c.weight, map: c.map, created_at: c.created_at || c.createdAt, daycaught: c.daycaught, bait: c.bait, baitscore: c.baitscore, weight_rank: c.weight_rank, x: c.x, y: c.y, line: c.linelevel, rod: c.rodlevel, sinker: c.sinkerlevel});
+
+async function loadPlayer(id) {
+  PL.id = String(id); LS.set("gf-player", PL.id); PL.err = "";
+  const api = await detectApi();
+  if (api) {
+    try {
+      const q = encodeURIComponent(PL.id);
+      const [main, sa, g, ch] = await Promise.all([
+        tryJson(`${api}player/${q}?include=recent,stats`, 15000), tryJson(`${api}player/${q}?include=species-analysis`, 15000).catch(() => ({})),
+        tryJson(`${api}player/${q}?include=gambles`, 15000).catch(() => ({})), tryJson(`${api}challenges`, 15000).catch(() => ({}))]);
+      let catches = [], page = 1;
+      while (page <= 40) { const c = await tryJson(`${api}player/${q}/catches?page=${page}`, 15000); catches = catches.concat(c.catches || []); if (page >= (c.totalPages || 1)) break; page++; }
+      Object.assign(PL, {mode: "live", player: main.player, recent: (main.recentCatches || []).map(normCatch), species: sa.speciesAnalysis || [], gambles: g.gambles || null, challenges: ch.challenges || [], catches: catches.map(normCatch), fetchedAt: new Date().toISOString()});
+      PL.catches.forEach(c => PL.liveIds.add(c.id));
+      startStream(); schedulePoll();
+      return;
+    } catch (e) { PL.err = `Couldn't load live data (${e.message || e}).`; }
+  }
+  const S = typeof PLAYER_SNAPSHOT !== "undefined" ? PLAYER_SNAPSHOT : null;
+  if (S && String(S.profileId) === PL.id) {
+    Object.assign(PL, {mode: "snapshot", player: S.player, recent: (S.recentCatches || []).map(normCatch), species: S.speciesAnalysis || [], gambles: S.gambles || null, challenges: S.challenges || [], catches: (S.catches || []).map(normCatch), fetchedAt: S.fetchedAt});
+  } else { PL.mode = "none"; PL.player = null; }
+}
+let pollT = null, refreshT = null;
+function schedulePoll() { clearInterval(pollT); pollT = setInterval(() => refreshSummary(), 60000); }
+async function refreshSummary() {
+  if (!PL.api) return;
+  try {
+    const main = await tryJson(`${PL.api}player/${encodeURIComponent(PL.id)}?include=recent,stats&t=${Date.now()}`, 15000);
+    PL.player = main.player; PL.recent = (main.recentCatches || []).map(normCatch); PL.fetchedAt = new Date().toISOString();
+    const g = await tryJson(`${PL.api}player/${encodeURIComponent(PL.id)}?include=gambles&t=${Date.now()}`, 15000).catch(() => null);
+    if (g?.gambles) PL.gambles = g.gambles;
+    if (onPlayerView()) { drawHead(); drawWhere(); drawGambles(); }
+  } catch {}
+}
+function startStream() {
+  if (PL.es || !PL.api || typeof EventSource === "undefined") return;
+  const es = new EventSource(PL.api + "liveview/recent/stream"); PL.es = es;
+  es.addEventListener("catch", e => {
+    let d; try { d = JSON.parse(e.data).catch; } catch { return; }
+    if (!d) return;
+    const now = Date.now(); PL.globalTimes.push(now); while (PL.globalTimes.length && now - PL.globalTimes[0] > 60000) PL.globalTimes.shift();
+    PL.global.unshift(d); PL.global.length = Math.min(PL.global.length, 14);
+    if (String(d.profileId) === PL.id && !PL.liveIds.has(d.id)) {
+      PL.liveIds.add(d.id);
+      const c = normCatch(d); c.fresh = true; PL.catches.unshift(c);
+      if (PL.player) { PL.player.totalcatches = String(+PL.player.totalcatches + 1); PL.player.lastactive = c.created_at; PL.player.lastmap = c.map; }
+      const sp = PL.species.find(s => s.fishType === c.fishtype);
+      if (sp) { sp.count++; sp.maxWeight = Math.max(sp.maxWeight, c.weight); }
+      toast(`🎣 ${esc(PL.player?.playername || "You")} caught a <b>${esc(c.fishtype)}</b> · ${lb(c.weight)} · ${esc(c.map || "")}`);
+      if (LS.get("gf-autosync", true)) { const f = FISH.find(x => x.n === c.fishtype); if (f && !CAUGHT.has(f.id)) toggleCaught(f.id, true); }
+      clearTimeout(refreshT); refreshT = setTimeout(refreshSummary, 4000);
+      if (onPlayerView()) { drawHead(); drawLive(); drawTable(); drawChallenges(); drawSpecies(); drawBreakdown(); }
+    }
+    if (onPlayerView() && !PL._gt) PL._gt = setTimeout(() => { PL._gt = null; drawGlobal(); }, 1000);
+  });
+  es.onopen = () => { const p = $("#pl-mode"); if (p) p.innerHTML = modePill(); };
+  es.onerror = () => { const p = $("#pl-mode"); if (p) p.innerHTML = modePill(true); };
+}
+const onPlayerView = () => $("#v-player")?.classList.contains("on");
+let toastT;
+function toast(html) {
+  let t = $("#toast"); if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.append(t); t.onclick = () => location.hash = "#player"; }
+  t.innerHTML = html; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 7000);
+}
+function modePill(err) {
+  if (PL.mode === "live") return err ? `<span class="pill warn"><i></i>Reconnecting…</span>` : `<span class="pill live"><i></i>Live</span>`;
+  if (PL.mode === "snapshot") return `<span class="pill snap"><i></i>Snapshot · ${esc(ago(PL.fetchedAt))}</span>`;
+  if (PL.mode === "loading") return `<span class="pill"><i></i>Loading…</span>`;
+  return `<span class="pill warn"><i></i>Offline</span>`;
+}
+
+function renderPlayer() {
+  const v = $("#v-player");
+  v.innerHTML = `
+  <div class="plbar">
+    <div class="plsearch"><input id="plq" type="search" placeholder="Find a player by name…" autocomplete="off"><div class="results" id="plres"></div></div>
+    <span id="pl-mode">${modePill()}</span>
+    <details class="plset"><summary>Connection</summary>
+      <p>gonefishing.gg doesn't allow other websites to read its API, so live data needs a relay:</p>
+      <ul><li><b>On this PC:</b> run <code>python serve.py</code> in the guide folder and open the link it prints.</li>
+      <li><b>Hosted copy:</b> deploy <code>proxy-worker.js</code> (Cloudflare Worker) and paste its URL here.</li></ul>
+      <label>API proxy URL <input id="plproxy" placeholder="https://your-worker.workers.dev/" value="${esc(LS.get("gf-proxy", ""))}"></label> <button class="btn" id="plproxysave">Save &amp; reconnect</button>
+      <p class="eyebrow" style="margin-top:6px">Without a relay you see the snapshot built into this file.</p>
+      <label style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="plauto" ${LS.get("gf-autosync", true) ? "checked" : ""}> Tick new catches in my catch book automatically</label>
+    </details>
+  </div>
+  <div id="pl-body"><div class="panel">Loading profile…</div></div>`;
+  wirePlayerBar();
+  if (!PL.id) {
+    $("#pl-mode").innerHTML = "";
+    $("#pl-body").innerHTML = `<div class="callout"><h3>Find your player</h3><ul><li>Search your in-game / Steam name above, or type your gonefishing.gg profile number.</li><li>You need at least one catch recorded on gonefishing.gg.</li></ul></div>`;
+    $("#plq").focus();
+    return;
+  }
+  if (PL.mode === "loading" || !PL.player || PL.loadedFor !== PL.id) {
+    loadPlayer(PL.id).then(() => { PL.loadedFor = PL.id; $("#pl-mode").innerHTML = modePill(); drawPlayer(); });
+  } else drawPlayer();
+}
+function wirePlayerBar() {
+  const q = $("#plq"), res = $("#plres"); let t;
+  q.oninput = () => { clearTimeout(t); const s = q.value.trim(); if (s.length < 2) { res.classList.remove("show"); return; }
+    t = setTimeout(async () => {
+      if (/^\d+$/.test(s)) { res.innerHTML = `<a data-id="${s}"><span class="k">id</span>Profile ${esc(s)}</a>`; res.classList.add("show"); return; }
+      const api = await detectApi();
+      if (!api) { res.innerHTML = `<a><span class="k">offline</span>Search needs live data<small>Run python serve.py, or type a profile number</small></a>`; res.classList.add("show"); return; }
+      try { const r = await tryJson(`${api}player/search?q=${encodeURIComponent(s)}`); res.innerHTML = (r.suggestions || []).slice(0, 10).map(p => `<a data-id="${esc(p.profileId)}"><span class="k">player</span>${esc(p.playerName || p.label)}<small>profile ${esc(p.profileId)}</small></a>`).join("") || `<a>No players found</a>`; res.classList.add("show"); } catch {}
+    }, 250); };
+  res.addEventListener("mousedown", e => { const a = e.target.closest("a[data-id]"); if (!a) return; e.preventDefault(); res.classList.remove("show"); q.value = "";
+    if (PL.es) { PL.es.close(); PL.es = null; } PL.liveIds = new Set(); PL.mode = "loading"; PL.loadedFor = null; PL.id = a.dataset.id; renderPlayer(); });
+  q.onblur = () => setTimeout(() => res.classList.remove("show"), 150);
+  $("#plproxysave").onclick = () => { LS.set("gf-proxy", $("#plproxy").value.trim()); PL.api = undefined; if (PL.es) { PL.es.close(); PL.es = null; } PL.mode = "loading"; PL.loadedFor = null; renderPlayer(); };
+  $("#plauto").onchange = e => LS.set("gf-autosync", e.target.checked);
+}
+
+function drawPlayer() {
+  const b = $("#pl-body"); if (!b) return;
+  if (!PL.player) {
+    b.innerHTML = `<div class="hazbox"><h3>No profile data</h3><ul><li>${esc(PL.err || "This profile isn't in the built-in snapshot and live data isn't available.")}</li><li>Open the guide from the hosted site (or run <code>python serve.py</code>) for live data.</li></ul></div>`; return;
+  }
+  b.innerHTML = `
+    <div id="pl-head"></div>
+    ${PL.err ? `<div class="hazbox" style="margin-bottom:10px"><h3>Live data unavailable</h3><ul><li>${esc(PL.err)} Showing the snapshot.</li></ul></div>` : ""}
+    ${PL.mode === "snapshot" ? `<div class="callout" style="margin-bottom:10px"><h3>Snapshot mode</h3><ul><li>This is a copy of the profile from ${esc(new Date(PL.fetchedAt).toLocaleString())}. For live updates run <code>python serve.py</code> in the guide folder (see Connection above).</li></ul></div>` : ""}
+    <div class="plgrid">
+      <div class="panel"><h2>Latest catches ${PL.mode === "live" ? `<span class="eyebrow">updates live</span>` : ""}</h2><div id="pl-live"></div></div>
+      <div class="panel"><h2>Challenges <span class="eyebrow">progress from your catches</span></h2><div id="pl-chal"></div></div>
+    </div>
+    <div class="panel" style="margin-top:10px"><h2>Where you've been fishing <span class="eyebrow">last ${PL.recent.length} catches with positions</span></h2><div id="pl-where"></div></div>
+    <div class="plgrid" style="margin-top:10px">
+      <div class="panel"><h2>Catch breakdown</h2><div id="pl-break"></div></div>
+      <div class="panel"><h2>Gambling</h2><div id="pl-gamble"></div></div>
+    </div>
+    <div class="panel" style="margin-top:10px"><h2>Species <span class="eyebrow" id="pl-spcount"></span></h2><div id="pl-species"></div></div>
+    <div class="panel" style="margin-top:10px"><h2>All catches <span class="eyebrow" id="pl-ccount"></span></h2><div id="pl-table"></div></div>
+    <div class="panel" style="margin-top:10px" ${PL.mode === "live" ? "" : "hidden"}><h2>Across the game right now <span class="eyebrow" id="pl-rate"></span></h2><div id="pl-global" class="gfeed"><p class="eyebrow">Waiting for catches…</p></div></div>`;
+  drawHead(); drawLive(); drawChallenges(); drawWhere(); drawBreakdown(); drawGambles(); drawSpecies(); drawTable(); drawGlobal();
+}
+function drawHead() {
+  const p = PL.player, el = $("#pl-head"); if (!el || !p) return;
+  const xp = p.xpStats || {}, span = (xp.requiredXP - xp.minXP) || 1, pct = Math.max(0, Math.min(100, (xp.currentXP - xp.minXP) / span * 100));
+  const caughtSp = PL.species.filter(s => s.count > 0).length;
+  const inGame = p.steamProfile?.isPlayingTarget;
+  const best = FISH.find(f => f.n === p.bestfishname);
+  el.innerHTML = `<div class="plhead">
+    <img class="plava" src="${esc(p.avatar || p.steamProfile?.avatar || "")}" alt="" referrerpolicy="no-referrer">
+    <div class="plwho">
+      <div class="eyebrow">gonefishing.gg profile ${esc(p.profile_id)}</div>
+      <h1>${esc(p.playername || p.persona)}</h1>
+      <div class="plbadges">
+        ${PL.mode === "snapshot" ? `<span class="pill snap"><i></i>${inGame ? "In game" : "Not in game"} at snapshot</span>` : inGame ? `<span class="pill live"><i></i>In GONE Fishing now</span>` : `<span class="pill"><i></i>Not in game</span>`}
+        <span class="chip">Last active ${esc(ago(p.lastactive))}</span>${p.lastmap ? `<a class="chip" href="#map-${MAPNAME[p.lastmap] || "maps"}">Last map: ${esc(p.lastmap)}</a>` : ""}
+        <a class="chip" href="${GG}/player/${encodeURIComponent(p.profile_id)}" target="_blank" rel="noopener">Open on gonefishing.gg ↗</a>
+      </div>
+      <div class="plxp"><div><b>${esc(xp.rank_title || "")}</b> <span class="eyebrow">${fmt(xp.currentXP)} XP · ${fmt(xp.xpLeftToRankup)} to next rank</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>
+    </div>
+    <div class="plstats">
+      <div class="stat"><b>${fmt(+p.totalcatches)}</b><span>catches</span></div>
+      <div class="stat"><b>${fmt(+p.catcheslast24h)}</b><span>last 24 h</span></div>
+      <div class="stat"><b>${caughtSp}/${FISH.length}</b><span>species</span></div>
+      <div class="stat"><b>#${fmt(+p.rank)}</b><span>leaderboard · top ${(+p.percentile).toFixed(1)}% · ${esc(p.rank_title || "")}</span></div>
+      <div class="stat"><b>${fmt(+p.allcatchesweight)}</b><span>lb caught in total</span></div>
+      <div class="stat"><b>${fmt(+p.averageweight)}</b><span>lb average</span></div>
+      <div class="stat"><b>${best ? `<button class="fishlink" data-pop="${best.id}" style="font:inherit">${esc(p.bestfishname)}</button>` : esc(p.bestfishname || "—")}</b><span>best fish · ${lb(p.bestfishweight)}</span></div>
+      <div class="stat"><b>${fmt(+p.dailycompleted + +p.weeklycompleted + +p.monthlycompleted + +p.globalcompleted)}</b><span>challenges done (D ${p.dailycompleted} · W ${p.weeklycompleted} · M ${p.monthlycompleted})</span></div>
+    </div></div>`;
+}
+const fishBtn = n => { const f = FISH.find(x => x.n === n); return f ? `<button class="fishlink" data-pop="${f.id}">${esc(n)}</button>` : esc(n); };
+function drawLive() {
+  const el = $("#pl-live"); if (!el) return;
+  el.innerHTML = `<div class="feed">${PL.catches.slice(0, 10).map(c => `<div class="frow ${c.fresh ? "fresh" : ""}"><span class="ft">${esc(ago(c.created_at))}</span><span class="fn">${fishBtn(c.fishtype)}</span><span class="fw">${lb(c.weight)}</span><span class="fm">${MAPNAME[c.map] ? `<span class="md" style="--mc:${MAPID[MAPNAME[c.map]].color}">${MAPID[MAPNAME[c.map]].code}</span>` : ""} ${esc(c.bait || "")}${c.baitscore != null ? ` <small>score ${Math.round(c.baitscore)}</small>` : ""}${c.daycaught ? ` <small>day ${esc(c.daycaught)}</small>` : ""}</span></div>`).join("") || `<p class="eyebrow">No catches yet.</p>`}</div>`;
+  PL.catches.forEach(c => c.fresh = false);
+}
+function drawChallenges() {
+  const el = $("#pl-chal"); if (!el) return;
+  const ord = {daily: 0, weekly: 1, monthly: 2};
+  const act = PL.challenges.filter(c => new Date(c.end_at) > Date.now()).sort((a, b) => (ord[a.type] ?? 3) - (ord[b.type] ?? 3) || new Date(a.end_at) - new Date(b.end_at));
+  if (!act.length) { el.innerHTML = `<p class="eyebrow">No active challenges${PL.mode === "snapshot" ? " in the snapshot" : ""}.</p>`; return; }
+  el.innerHTML = act.map(c => {
+    const prog = PL.catches.filter(x => x.fishtype === c.fish_type && new Date(x.created_at) >= new Date(c.start_at) && new Date(x.created_at) <= new Date(c.end_at)).length;
+    const pct = Math.min(100, prog / c.target_count * 100), done = prog >= c.target_count;
+    const f = FISH.find(x => x.n === c.fish_type);
+    return `<div class="chal ${done ? "done" : ""}"><div class="row2" style="justify-content:space-between"><span><span class="tag ${c.type === "daily" ? "c" : c.type === "weekly" ? "m" : "l"}">${esc(c.type)}</span> <b>${esc(c.title)}</b></span><span class="eyebrow">${esc(timeLeft(c.end_at))}</span></div>
+      <div class="bar"><i style="width:${pct}%;${done ? "background:var(--ok)" : ""}"></i></div>
+      <div class="eyebrow">${prog}/${c.target_count}${done ? " · done ✓" : ""}${f ? ` · found on ${f.maps.filter(m => m !== "T").map(m => MAPBY[m].name).join(", ")}` : ""}</div></div>`;
+  }).join("") + `<p class="eyebrow" style="margin-top:6px">Progress counts your logged catches of that fish in the challenge window.</p>`;
+}
+function drawWhere() {
+  const el = $("#pl-where"); if (!el) return;
+  const by = {}; PL.recent.forEach(c => { const m = MAPNAME[c.map]; if (m && c.x != null) (by[m] = by[m] || []).push(c); });
+  const ids = Object.keys(by);
+  if (!ids.length) { el.innerHTML = `<p class="eyebrow">No catch positions yet.</p>`; return; }
+  el.innerHTML = `<div class="wheremaps">${ids.map(m => `<div class="wmap"><div class="wimg"><img src="${MAPIMG[m]}" alt="${esc(MAPID[m].name)}">${by[m].map((c, i) => { const p = w2pct(m, c.x, c.y); return p ? `<button class="wdot" style="left:${p.x}%;top:${p.y}%" title="${esc(`${c.fishtype} · ${lb(c.weight)} · ${c.bait || ""} · ${ago(c.created_at)}`)}"></button>` : ""; }).join("")}</div>
+    <div class="row2" style="justify-content:space-between;margin-top:4px"><a href="#map-${m}" style="font-weight:600">${esc(MAPID[m].name)}</a><span class="eyebrow">${by[m].length} catch${by[m].length > 1 ? "es" : ""}</span></div></div>`).join("")}</div>
+    <p class="eyebrow" id="pl-whereinfo" style="margin-top:6px">Hover or tap a dot for the catch.</p>`;
+  $$(".wdot", el).forEach(d => d.onclick = () => $("#pl-whereinfo").textContent = d.title);
+}
+function bars(rows, color) {
+  const mx = Math.max(1, ...rows.map(r => r[1]));
+  return rows.map(([k, n, extra]) => `<div class="hb"><span class="hk">${k}</span><span class="hbar"><i style="width:${n / mx * 100}%;background:${color || "var(--accent)"}"></i></span><span class="hn">${n}${extra ? ` <small>${extra}</small>` : ""}</span></div>`).join("");
+}
+function drawBreakdown() {
+  const el = $("#pl-break"); if (!el) return;
+  const cnt = (f) => { const m = {}; PL.catches.forEach(c => { const k = f(c); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+  const maps = cnt(c => c.map), baits = cnt(c => c.bait).slice(0, 8);
+  const sc = PL.catches.filter(c => c.baitscore != null).map(c => c.baitscore), days = PL.catches.map(c => +c.daycaught).filter(Boolean);
+  el.innerHTML = `<h3 class="eyebrow">By map</h3>${bars(maps.map(([k, n]) => [MAPNAME[k] ? `<a href="#map-${MAPNAME[k]}">${esc(k)}</a>` : esc(k), n]))}
+    <h3 class="eyebrow" style="margin-top:10px">Top baits</h3>${bars(baits.map(([k, n]) => { const b = BAIT.find(x => x.n.toLowerCase() === k.toLowerCase()); return [esc(k), n, b ? `bait ${b.score}` : ""]; }), "#10b981")}
+    <div class="stats" style="margin-top:10px"><div class="stat"><b style="font-size:22px">${sc.length ? Math.round(Math.max(...sc)) : "—"}</b><span>best bait score</span></div><div class="stat"><b style="font-size:22px">${sc.length ? Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) : "—"}</b><span>average bait score</span></div><div class="stat"><b style="font-size:22px">${days.length ? Math.max(...days) : "—"}</b><span>furthest day</span></div></div>
+    <p class="eyebrow">Legendary bites need a total bait score of 175+.</p>`;
+}
+function drawGambles() {
+  const el = $("#pl-gamble"); if (!el) return;
+  const s = PL.gambles?.stats;
+  if (!s || !s.totalGambles) { el.innerHTML = `<p>No gambles logged yet.</p><p class="eyebrow">The gambling pool multiplies a fish's value up to 10×. One reported split: 65% lose / 35% win. Only gamble fish you don't need for quota.</p>`; return; }
+  const mult = g => g.before_price > 0 ? g.after_price / g.before_price : 0;
+  const sign = n => (n >= 0 ? "+" : "−") + fmt(Math.abs(n));
+  const gRow = g => { const m = mult(g), win = g.after_price > g.before_price;
+    return `<div class="frow" style="grid-template-columns:76px minmax(0,1fr) 70px 120px"><span class="ft">${esc(ago(g.created_at))}</span><span class="fn">${fishBtn(g.fish_type)}</span><span class="fw" style="color:${win ? "var(--ok)" : "var(--bad)"}">×${m.toFixed(2)}</span><span class="fm mono">${fmt(g.before_price)} → ${fmt(g.after_price)}</span></div>`; };
+  const big = (lbl, g) => g ? `<div class="chal ${g.valueChange >= 0 ? "done" : ""}" style="flex:1"><div class="eyebrow">${lbl}</div><b>${fishBtn(g.fish_type)}</b> <span class="mono">×${mult(g).toFixed(2)}</span><div class="eyebrow">${fmt(g.before_price)} → ${fmt(g.after_price)} gold · ${esc(ago(g.created_at))}</div></div>` : "";
+  el.innerHTML = `<div class="stats" style="margin-top:0">
+      <div class="stat"><b style="font-size:24px">${fmt(s.totalGambles)}</b><span>gambles · ${s.successfulGambles} won · ${s.failedGambles} lost</span></div>
+      <div class="stat"><b style="font-size:24px;color:${s.successRate >= 50 ? "var(--ok)" : "var(--bad)"}">${(+s.successRate).toFixed(0)}%</b><span>win rate</span></div>
+      <div class="stat"><b style="font-size:24px;color:${s.totalValueChange >= 0 ? "var(--ok)" : "var(--bad)"}">${sign(s.totalValueChange)}</b><span>gold (${fmt(s.totalValueBefore)} → ${fmt(s.totalValueAfter)}, ${s.totalValueChangePercent >= 0 ? "+" : ""}${(+s.totalValueChangePercent).toFixed(0)}%)</span></div></div>
+    <div class="row2" style="margin-top:8px;flex-wrap:wrap">${big("Best gamble", s.bestGamble)}${s.worstGamble && s.worstGamble.id !== s.bestGamble?.id ? big("Worst gamble", s.worstGamble) : ""}</div>
+    ${(PL.gambles.recentGambles || []).length ? `<h3 class="eyebrow" style="margin-top:8px">Recent gambles</h3><div class="feed">${PL.gambles.recentGambles.slice(0, 8).map(gRow).join("")}</div>` : ""}
+    ${(PL.gambles.fishTypeStats || []).length ? `<h3 class="eyebrow" style="margin-top:8px">By fish (gold gained)</h3>${bars(PL.gambles.fishTypeStats.slice(0, 8).map(x => [fishBtn(x.fish_type), Math.round(x.totalValueChange), `${x.count}× · ${Math.round(x.successRate)}% won`]), "var(--gold)")}` : ""}
+    <p class="eyebrow" style="margin-top:6px">Values are trader gold before and after the gamble. Updates every minute.</p>`;
+}
+function drawSpecies() {
+  const el = $("#pl-species"); if (!el) return;
+  const got = PL.species.filter(s => s.count > 0);
+  $("#pl-spcount").textContent = `${got.length} of ${PL.species.length || FISH.length} caught`;
+  const missingInBook = got.filter(s => { const f = FISH.find(x => x.n === s.fishType); return f && !CAUGHT.has(f.id); });
+  const rows = [...PL.species].sort((a, b) => b.count - a.count || a.fishType.localeCompare(b.fishType));
+  el.innerHTML = `<div class="row2" style="justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap"><span class="eyebrow">Bar = your best weight vs the heaviest that species can get</span>
+    ${missingInBook.length ? `<button class="btn" id="plsync">Add ${missingInBook.length} to my catch book</button>` : `<span class="eyebrow">Catch book is in sync ✓</span>`}</div>
+    <div class="spgrid">${rows.map(s => { const f = FISH.find(x => x.n === s.fishType); const pct = s.theoreticalMaxWeight ? Math.min(100, s.maxWeight / s.theoreticalMaxWeight * 100) : 0;
+      return `<div class="sp ${s.count ? "got" : ""}">${f ? `<button class="fishlink" data-pop="${f.id}">${esc(s.fishType)}</button>` : esc(s.fishType)}${f ? ` <span class="tag ${tierCls(f)}" style="font-size:9px">${f.tier.toUpperCase()}</span>` : ""}
+        <div class="spn">${s.count ? `${s.count}× · best ${lb(s.maxWeight)}` : `<span class="eyebrow">not yet${s.neverCaughtByAnyone ? " · nobody has!" : ""}</span>`}</div>
+        ${s.count ? `<div class="bar" title="${pct.toFixed(1)}% of max ${fmt(s.theoreticalMaxWeight)} lb"><i style="width:${Math.max(2, pct)}%"></i></div>` : ""}</div>`; }).join("")}</div>`;
+  const sb = $("#plsync"); if (sb) sb.onclick = () => { missingInBook.forEach(s => toggleCaught(FISH.find(x => x.n === s.fishType).id, true)); drawSpecies(); };
+}
+function drawTable() {
+  const el = $("#pl-table"); if (!el) return;
+  $("#pl-ccount").textContent = `${PL.catches.length} logged`;
+  const maps = [...new Set(PL.catches.map(c => c.map).filter(Boolean))];
+  if (!$("#pltable")) {
+    el.innerHTML = `<div class="filters"><div class="seg" id="plmap">${[["all", "All maps"], ...maps.map(m => [m, m.replace(/^The /, "")])].map(([k, l]) => `<button data-v="${esc(k)}" aria-pressed="${PLF.map === k}">${esc(l)}</button>`).join("")}</div><input type="search" id="plfq" placeholder="Filter fish or bait…" value="${esc(PLF.fish)}"><span class="count" id="plcount"></span></div>
+      <div class="tablewrap" style="max-height:560px;overflow:auto"><table class="t" id="pltable"><thead><tr><th data-k="t">When</th><th data-k="fish">Fish</th><th data-k="w" class="n">Weight</th><th data-k="r" class="n" title="How this catch ranks among your catches of that fish">Your rank</th><th data-k="map">Map</th><th data-k="bait">Bait</th><th data-k="bs" class="n">Bait score</th><th data-k="day" class="n">Day</th></tr></thead><tbody></tbody></table></div>`;
+    $$("#plmap button").forEach(b => b.onclick = () => { PLF.map = b.dataset.v; $$("#plmap button").forEach(x => x.setAttribute("aria-pressed", x === b)); fill(); });
+    $("#plfq").oninput = e => { PLF.fish = e.target.value; fill(); };
+    PL._sort = sortable($("#pltable"), PL.catches.length ? PL.catches : [{}], {t: c => +new Date(c.created_at), fish: c => c.fishtype || "", w: c => c.weight, r: c => c.weight_rank ?? 999, map: c => c.map || "", bait: c => c.bait || "", bs: c => c.baitscore ?? -1, day: c => +c.daycaught || 0},
+      c => `<tr><td class="mono" style="white-space:nowrap" title="${esc(new Date(c.created_at).toLocaleString())}">${esc(ago(c.created_at))}</td><td class="nm">${fishBtn(c.fishtype)}</td><td class="n">${lb(c.weight)}</td><td class="n">${c.weight_rank ? "#" + c.weight_rank : "—"}</td><td>${MAPNAME[c.map] ? `<a class="md" style="--mc:${MAPID[MAPNAME[c.map]].color}" href="#map-${MAPNAME[c.map]}">${MAPID[MAPNAME[c.map]].code}</a> ` : ""}${esc((c.map || "").replace(/^The /, ""))}</td><td>${esc(c.bait || "")}</td><td class="n">${c.baitscore != null ? Math.round(c.baitscore) : "—"}</td><td class="n">${esc(c.daycaught || "")}</td></tr>`, ["t", -1]);
+  }
+  function fill() { const q = PLF.fish.toLowerCase(); const l = PL.catches.filter(c => (PLF.map === "all" || c.map === PLF.map) && (!q || (c.fishtype || "").toLowerCase().includes(q) || (c.bait || "").toLowerCase().includes(q))); $("#plcount").textContent = `${l.length} shown`; PL._sort(l); }
+  fill();
+}
+function drawGlobal() {
+  const el = $("#pl-global"); if (!el || !PL.global.length) return;
+  $("#pl-rate").textContent = `${PL.globalTimes.length} catches in the last minute`;
+  el.innerHTML = PL.global.map(c => `<div class="frow ${String(c.profileId) === PL.id ? "me" : ""}"><span class="ft">${esc(ago(c.createdAt))}</span><span class="fn">${fishBtn(c.fishtype)} <small>${lb(c.weight)}</small></span><span class="fm"><a href="${GG}/player/${encodeURIComponent(c.profileId)}" target="_blank" rel="noopener">${esc(c.playername)}</a> · ${esc((c.map || "").replace(/^The /, ""))} · ${esc(c.bait || "")} <small>day ${esc(c.daycaught)} · L${c.linelevel}/R${c.rodlevel}/S${c.sinkerlevel}</small></span></div>`).join("");
+}
+
+/* ---------- router ---------- */
+const VIEWS = {player: renderPlayer, home: renderHome, fish: renderFish, bait: renderBait, maps: renderMaps, threats: renderThreats, upgrades: renderUpgrades, calc: renderCalc, guides: renderGuides, catchbook: renderCatchbook, notes: renderNotes};
+function route() {
+  pop.hidden = true;
+  let h = location.hash.slice(1) || "home", view = h, tab = h, arg = null;
+  if (h.startsWith("map-")) { view = "map"; tab = "maps"; arg = h.slice(4); }
+  else if (h.startsWith("guides/")) { view = "guides"; tab = "guides"; arg = h.slice(7); }
+  if (view !== "map" && !VIEWS[view]) { view = tab = "home"; }
+  $$(".view").forEach(v => v.classList.toggle("on", v.id === "v-" + view));
+  $$("nav.tabs a").forEach(a => a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  if (view === "map") renderMap(arg); else VIEWS[view](arg);
+  if (!(view === "guides" && arg)) window.scrollTo(0, 0);
+}
+const setTop = () => document.documentElement.style.setProperty("--top", $(".top").offsetHeight + "px");
+addEventListener("resize", setTop); setTop();
+addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
