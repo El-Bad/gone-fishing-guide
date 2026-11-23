@@ -4,6 +4,8 @@
   "name": "gone-fishing",
   "main": "worker/index.ts",
   "compatibility_date": "2026-05-01",
+  "workers_dev": true,   // served at https://gone-fishing.elbad.workers.dev
+  "preview_urls": false,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

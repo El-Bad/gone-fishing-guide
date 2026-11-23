@@ -2,7 +2,7 @@
 
 Two fan-made companions for **GONE Fishing** (GONE Studios, Steam app 3645890), the co-op survival-horror fishing game.
 
-**Use it:** _link added after the first deploy_
+**Use it:** https://gone-fishing.elbad.workers.dev (session tracker) · https://gone-fishing.elbad.workers.dev/guide/ (field guide)
 
 ## Session tracker (`live/`)
 Follow your play session live:
